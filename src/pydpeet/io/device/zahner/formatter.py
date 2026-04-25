@@ -1,9 +1,9 @@
 import pandas as pd
 
-from pydpeet.io.utils.formatter_utils import nan_to_none_in_column, round_testtime, typecast
+from pydpeet.io.utils.formatter_utils import _nan_to_none_in_column, _round_testtime, _typecast
 
 
-def get_data_into_format_zahner_1(df: pd.DataFrame) -> pd.DataFrame:
+def _get_data_into_format_zahner_1(df: pd.DataFrame) -> pd.DataFrame:
     """
     Format a DataFrame in the format of a Zahner EIS file, type 1.
 
@@ -28,17 +28,17 @@ def get_data_into_format_zahner_1(df: pd.DataFrame) -> pd.DataFrame:
     pandas.DataFrame
         Modified DataFrame.
     """
-    df = round_testtime(df)
-    df = nan_to_none_in_column(df, "Test_Time[s]")
-    typecast(df, "Step_Count", int)
-    typecast(df, "EIS_f[Hz]", float)
-    typecast(df, "EIS_Z_Real[Ohm]", float)
-    typecast(df, "EIS_Z_Imag[Ohm]", float)
+    df = _round_testtime(df)
+    df = _nan_to_none_in_column(df, "Test_Time[s]")
+    _typecast(df, "Step_Count", int)
+    _typecast(df, "EIS_f[Hz]", float)
+    _typecast(df, "EIS_Z_Real[Ohm]", float)
+    _typecast(df, "EIS_Z_Imag[Ohm]", float)
 
     return df
 
 
-def get_data_into_format_zahner_2(df: pd.DataFrame) -> pd.DataFrame:
+def _get_data_into_format_zahner_2(df: pd.DataFrame) -> pd.DataFrame:
     """
     Format a DataFrame in the format of a Zahner EIS file, type 2.
 
@@ -63,11 +63,11 @@ def get_data_into_format_zahner_2(df: pd.DataFrame) -> pd.DataFrame:
     pandas.DataFrame
         Modified DataFrame.
     """
-    df = round_testtime(df)
-    df = nan_to_none_in_column(df, "Test_Time[s]")
-    typecast(df, "Step_Count", int)
-    typecast(df, "Voltage[V]", float)
-    typecast(df, "Current[A]", float)
-    typecast(df, "Test_Time[s]", float)
+    df = _round_testtime(df)
+    df = _nan_to_none_in_column(df, "Test_Time[s]")
+    _typecast(df, "Step_Count", int)
+    _typecast(df, "Voltage[V]", float)
+    _typecast(df, "Current[A]", float)
+    _typecast(df, "Test_Time[s]", float)
 
     return df

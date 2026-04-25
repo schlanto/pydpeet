@@ -6,6 +6,7 @@ Created: 2026-03-06 15:11:49
 # Re-export selected names from source modules
 
 from pydpeet.citations.citeme import print_references, write_to_bibtex
+from pydpeet.io.configs.config import ReadConfig
 from pydpeet.io.convert import convert
 from pydpeet.io.map import mapping
 from pydpeet.io.read import read
@@ -31,6 +32,7 @@ from pydpeet.utils.logging_style import set_logging_style
 # Public API for this package
 __all__ = [
     "BatteryConfig",
+    "ReadConfig",
     "SocMethod",
     "add_capacity",
     "add_primitive_segments",

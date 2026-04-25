@@ -1,5 +1,5 @@
 # Map raw-data column names (left) to standardized column names (right)
-COLUMN_MAP = {
+_COLUMN_MAP = {
     "Elapsed Time (s)": "Test_Time[s]",
     "Potential (V)": "Voltage[V]",
     "Current (A)": "Current[A]",
@@ -11,7 +11,7 @@ COLUMN_MAP = {
 
 # Default columns of the standardized format
 # which are not present in the raw data files.
-MISSING_REQUIRED_COLUMNS = [
+_MISSING_REQUIRED_COLUMNS = [
     "Temperature[°C]",
     "Date_Time",
     "EIS_DC[A]",

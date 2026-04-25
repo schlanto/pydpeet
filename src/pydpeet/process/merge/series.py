@@ -4,8 +4,8 @@ import numpy as np
 import pandas as pd
 
 from pydpeet.process.analyze.utils import (
-    StepTimer,
-    drop_duplicate_testtime,
+    _drop_duplicate_testtime,
+    _StepTimer,
 )
 from pydpeet.utils.guardrails import _guardrail_boolean
 
@@ -73,7 +73,7 @@ def merge_into_series(
     if verbose:
         logging.info(f"Adjusting Testtime and adding {time_between_tests_seconds}s pauses...")
 
-    with StepTimer(verbose) as st:
+    with _StepTimer(verbose) as st:
         for i, raw_df in enumerate(sorted_dfs):
             if raw_df is None or raw_df.empty or "Test_Time[s]" not in raw_df.columns:
                 continue
@@ -153,7 +153,7 @@ def merge_into_series(
                     other_storage[column].append(pd.NA)
 
                 if verbose:
-                    st.log(f"Added pause row after DataFrame {i} at {pause_value}s")
+                    st._log(f"Added pause row after DataFrame {i} at {pause_value}s")
 
                 # --- Set time_offset for the next DataFrame to df_max + pause ---
                 time_offset = df_max + time_between_tests_seconds
@@ -165,7 +165,7 @@ def merge_into_series(
     if not numeric_storage:
         return pd.DataFrame()
 
-    with StepTimer(verbose) as st:
+    with _StepTimer(verbose) as st:
         logging.info("Merging DataFrames...")
         numeric_array = np.vstack(numeric_storage)
 
@@ -179,9 +179,9 @@ def merge_into_series(
 
         dfs_merged = pd.DataFrame(data_dict, columns=col_order)
         dfs_merged["Test_Time[s]"] = dfs_merged["Test_Time[s]"].astype(float)
-        st.log(f"Final merged DataFrame shape: {dfs_merged.shape}")
+        st._log(f"Final merged DataFrame shape: {dfs_merged.shape}")
 
-    dfs_merged = drop_duplicate_testtime(dfs_merged)
+    dfs_merged = _drop_duplicate_testtime(dfs_merged)
 
     return dfs_merged
 
@@ -271,9 +271,9 @@ def merge_into_campaign(
     """
     test_campaigns = []
     for test in dfs_list:
-        with StepTimer(verbose) as st:
+        with _StepTimer(verbose) as st:
             test_campaign = merge_into_series(test, verbose=verbose)
-            st.log("Executed one test series")
+            st._log("Executed one test series")
         test_campaigns.append(test_campaign)
 
     if verbose:

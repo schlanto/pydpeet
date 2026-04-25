@@ -3,8 +3,8 @@ import logging
 import pandas as pd
 
 from pydpeet.process.analyze.utils import (
-    StepTimer,
     _check_columns,
+    _StepTimer,
 )
 
 
@@ -24,9 +24,9 @@ def add_power(
     logging.info("Calculating Power[W]...")
 
     df_mod = df.copy()
-    with StepTimer(verbose) as st:
+    with _StepTimer(verbose) as st:
         _check_columns(df_mod, ["Current[A]", "Voltage[V]"])
         df_mod["Power[W]"] = df_mod["Current[A]"] * df_mod["Voltage[V]"]
-        st.log("calculated Power[W]")
+        st._log("calculated Power[W]")
 
     return df_mod

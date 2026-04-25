@@ -6,7 +6,7 @@ import pandas as pd
 from numba import njit
 
 
-class StepTimer:
+class _StepTimer:
     """Helper to log elapsed time for sub-steps inside a method."""
 
     def __init__(self, verbose=True, indent="    "):
@@ -21,7 +21,7 @@ class StepTimer:
     def __exit__(self, exc_type, exc_val, exc_tb):
         pass
 
-    def log(self, msg: str):
+    def _log(self, msg: str):
         if self.verbose:
             assert self.start is not None
             elapsed = time.perf_counter() - self.start
@@ -44,7 +44,7 @@ def _check_columns(df: pd.DataFrame, required_columns: list[str]) -> None:
 
 
 @njit(cache=True)
-def precompute_block_arrays_soc_methods(time, current, voltage, capacity_values, c_ref):
+def _precompute_block_arrays_soc_methods(time, current, voltage, capacity_values, c_ref):
     """
     Numba-optimized version of precompute_block_arrays_soc_methods.
     Returns: (delta_soc, current_arr, abs_current, voltage_arr, c_ref_as)
@@ -104,7 +104,7 @@ def precompute_block_arrays_soc_methods(time, current, voltage, capacity_values,
     return delta_soc, current, abs_current, voltage_arr, c_ref_as
 
 
-def drop_duplicate_testtime(df: pd.DataFrame, keep: str | bool = "first") -> pd.DataFrame:
+def _drop_duplicate_testtime(df: pd.DataFrame, keep: str | bool = "first") -> pd.DataFrame:
     """
     Drop duplicate rows based on Test_Time[s].
     keep='first' keeps the first occurrence,

@@ -8,7 +8,7 @@ from scipy import integrate
 from pydpeet.process.analyze.configs.battery_config import BatteryConfig
 from pydpeet.process.analyze.configs.step_analyzer_config import SEGMENT_SEQUENCE_CONFIG
 from pydpeet.process.analyze.utils import (
-    StepTimer,
+    _StepTimer,
 )
 from pydpeet.process.sequence.step_analyzer import extract_sequence_overview
 from pydpeet.process.sequence.utils.postprocessing.filter_df import filter_and_split_df_by_blocks
@@ -98,11 +98,11 @@ def add_capacity(
     logging.info(f"Starting capacity computation on dataframe of size {len(df_mod)}...")
 
     # Step 2: Segments and sequences
-    with StepTimer(verbose) as st:
+    with _StepTimer(verbose) as st:
         df_segments_and_sequences = extract_sequence_overview(
             df_primitives, SEGMENT_SEQUENCE_CONFIG=SEGMENT_SEQUENCE_CONFIG
         )
-        st.log("computed segments and sequences")
+        st._log("computed segments and sequences")
 
     if neware_bool:
         # Step 3: Filter discharge blocks
@@ -114,7 +114,7 @@ def add_capacity(
             "CC_Discharge_after_CC_Charge_with_Pause",
             "CC_Discharge_after_CV_Charge_with_Pause",
         ]
-        with StepTimer(verbose) as st:
+        with _StepTimer(verbose) as st:
             dfs_per_block, df_filtered = filter_and_split_df_by_blocks(
                 df_segments_and_sequences=df_segments_and_sequences,
                 df_primitives=df_primitives,
@@ -122,10 +122,10 @@ def add_capacity(
                 combine_op="or",
                 also_return_filtered_df=True,
             )
-            st.log("filtered initial discharge blocks")
+            st._log("filtered initial discharge blocks")
 
     rules = ["CC_Discharge"]
-    with StepTimer(verbose) as st:
+    with _StepTimer(verbose) as st:
         dfs_per_block, df_filtered = filter_and_split_df_by_blocks(
             df_segments_and_sequences=df_segments_and_sequences,
             df_primitives=df_primitives,
@@ -133,7 +133,7 @@ def add_capacity(
             combine_op="or",
             also_return_filtered_df=True,
         )
-        st.log("filtered CC_Discharge blocks")
+        st._log("filtered CC_Discharge blocks")
 
     discharge_dfs = []
     # search for the blocks with a full discharge (from max to min)
@@ -154,9 +154,9 @@ def add_capacity(
         if len(block) > 0:
             time_seconds = block["Test_Time[s]"].values
             current = block["Current[A]"].values
-            with StepTimer(verbose) as st:
+            with _StepTimer(verbose) as st:
                 capacity_ah = integrate.cumulative_trapezoid(abs(current), time_seconds, initial=0) / 3600
-                st.log(f"computed cumulative capacity for block {i}")
+                st._log(f"computed cumulative capacity for block {i}")
             block["Capacity[Ah]"] = float("NaN")
             block.loc[block.index[-1], "Capacity[Ah]"] = capacity_ah[-1]
 
@@ -225,7 +225,7 @@ def add_charge_throughput(
         charge_throughput[valid_indices] = charge
         abs_charge_throughput[valid_indices] = abs_charge
 
-    with StepTimer(verbose) as st:
+    with _StepTimer(verbose) as st:
         if calculate_tests_individually and (testindex_col in df.columns):
             testvalues = df[testindex_col].to_numpy()
             starts = np.nonzero(np.concatenate(([True], testvalues[1:] != testvalues[:-1])))[0]
@@ -234,10 +234,10 @@ def add_charge_throughput(
                 start = int(starts[i])
                 end = int(starts[i + 1])
                 _process_slice(start, end)
-            st.log("Processed charge throughput per individual test blocks")
+            st._log("Processed charge throughput per individual test blocks")
         else:
             _process_slice(0, n)
-            st.log("Processed charge throughput for whole DataFrame")
+            st._log("Processed charge throughput for whole DataFrame")
 
     df_mod = df.copy()
     df_mod["ChargeThroughput[Ah]"] = charge_throughput

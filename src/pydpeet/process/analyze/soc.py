@@ -10,8 +10,8 @@ from numba import njit
 from pydpeet.process.analyze.capacity import add_capacity
 from pydpeet.process.analyze.configs.battery_config import BatteryConfig
 from pydpeet.process.analyze.utils import (
-    StepTimer,
-    precompute_block_arrays_soc_methods,
+    _precompute_block_arrays_soc_methods,
+    _StepTimer,
 )
 from pydpeet.utils.guardrails import _guardrail_boolean, _guardrail_dataframe
 
@@ -237,12 +237,12 @@ def add_soc(
     if "Capacity[Ah]" not in df.columns:
         # TODO: Assumed stack level for now
         logging.warning("Column 'Capacity[Ah]' missing, adding with function add_capacity.", stacklevel=2)
-        with StepTimer(verbose) as st:
+        with _StepTimer(verbose) as st:
             if df_primitives is None:
                 logging.info("df_primitives is None, please provide a valid df_primitives for add_capacity function")
             else:
                 df = add_capacity(df, df_primitives, neware_bool=neware_bool, config=config, verbose=verbose)
-                st.log("added Capacity[Ah] column")
+                st._log("added Capacity[Ah] column")
 
     # Copy df so it can be safely modified
     df_mod = df.copy()
@@ -262,18 +262,18 @@ def add_soc(
     logging.info(f"Starting SOC computation on dataframe of size {len(df_mod)}...")
 
     # precompile numba functions to be faster with first big block
-    with StepTimer(verbose) as st:
-        warmup_numba()
-        st.log("warmed up numba")
+    with _StepTimer(verbose) as st:
+        _warmup_numba()
+        st._log("warmed up numba")
 
     logging.info("Pre-creating SOC columns...")
     # Pre-create SOC columns
-    with StepTimer(verbose) as st:
+    with _StepTimer(verbose) as st:
         for m in methods:
             colname = "SOC_" + (m.name if hasattr(m, "name") else str(m))
             if colname not in df_mod.columns:
                 df_mod[colname] = np.nan
-                st.log(f"created column {colname}")
+                st._log(f"created column {colname}")
 
     # Helper to adjust voltages
     def _adj_voltages(max_v, min_v, intervall):
@@ -293,21 +293,21 @@ def add_soc(
             block_sorted = block.sort_values("Test_Time[s]")  # keep original index values
 
             # Precompute arrays on the sorted block
-            with StepTimer(verbose) as st:
+            with _StepTimer(verbose) as st:
                 if block_sorted["Capacity[Ah]"].notna().any():
                     capacity_values = block_sorted["Capacity[Ah]"].values.astype(np.float64)
                 else:
                     # pass an array of NaNs with same length (numba-friendly)
                     capacity_values = np.full(len(block_sorted), np.nan, dtype=np.float64)
 
-                delta_soc, current_arr, abs_current, voltage_arr, c_ref_as = precompute_block_arrays_soc_methods(
+                delta_soc, current_arr, abs_current, voltage_arr, c_ref_as = _precompute_block_arrays_soc_methods(
                     block_sorted["Test_Time[s]"].values,
                     block_sorted["Current[A]"].values,
                     block_sorted["Voltage[V]"].values,
                     capacity_values,
                     c_ref,
                 )
-                st.log("precomputed block arrays")
+                st._log("precomputed block arrays")
 
             # Using sorted block length for allocations (important!)
             max_voltage_adj, min_voltage_adj = _adj_voltages(max_voltage, min_voltage, voltage_intervall)
@@ -317,7 +317,7 @@ def add_soc(
             socs_matrix = np.empty((len(methods), n_points), dtype=np.float64)
             reset_buf = np.empty(n_points, dtype=np.float64)
 
-            with StepTimer(verbose) as st:
+            with _StepTimer(verbose) as st:
                 _compute_soc_multi_methods_out(
                     delta_soc,
                     current_arr,
@@ -333,7 +333,7 @@ def add_soc(
                     socs_matrix,
                     reset_buf,
                 )
-                st.log("computed SOC values")
+                st._log("computed SOC values")
 
             # sanity check
             assert socs_matrix.shape[1] == len(block_sorted), "SOC length mismatch vs block_sorted!"
@@ -349,15 +349,15 @@ def add_soc(
     else:
         logging.info(f"Processing whole dataframe ({len(df_mod)} rows)...")
 
-        with StepTimer(verbose) as st:
-            delta_soc, current_arr, abs_current, voltage_arr, c_ref_as = precompute_block_arrays_soc_methods(
+        with _StepTimer(verbose) as st:
+            delta_soc, current_arr, abs_current, voltage_arr, c_ref_as = _precompute_block_arrays_soc_methods(
                 df_mod["Test_Time[s]"].values,
                 df_mod["Current[A]"].values,
                 df_mod["Voltage[V]"].values,
                 df_mod["Capacity[Ah]"].values,
                 c_ref,
             )
-            st.log("precomputed arrays")
+            st._log("precomputed arrays")
 
         max_voltage_adj, min_voltage_adj = _adj_voltages(max_voltage, min_voltage, voltage_intervall)
         method_ints = np.array([SOC_METHOD_MAP[m.name] for m in methods], dtype=np.int64)
@@ -366,7 +366,7 @@ def add_soc(
         socs_matrix = np.empty((len(methods), n_points), dtype=np.float64)
         reset_buf = np.empty(n_points, dtype=np.float64)
 
-        with StepTimer(verbose) as st:
+        with _StepTimer(verbose) as st:
             _compute_soc_multi_methods_out(
                 delta_soc,
                 current_arr,
@@ -382,7 +382,7 @@ def add_soc(
                 socs_matrix,
                 reset_buf,
             )
-            st.log("computed SOC values")
+            st._log("computed SOC values")
 
         for idx_method, method in enumerate(methods):
             colname = "SOC_" + (method.name if hasattr(method, "name") else str(method))
@@ -401,7 +401,7 @@ def add_soc(
     return df_mod
 
 
-def warmup_numba():
+def _warmup_numba():
     """
     Warm up numba by calling the expensive functions with dummy data.
 
@@ -412,7 +412,7 @@ def warmup_numba():
     c = np.zeros(n, dtype=np.float64)
     v = np.zeros(n, dtype=np.float64)
     cap = np.ones(n, dtype=np.float64)
-    precompute_block_arrays_soc_methods(t, c, v, cap, 1.0)
+    _precompute_block_arrays_soc_methods(t, c, v, cap, 1.0)
     dummy_methods = np.array([0], dtype=np.int64)
     socs_out = np.zeros((1, n), dtype=np.float64)
     reset_buf = np.zeros(n, dtype=np.float64)

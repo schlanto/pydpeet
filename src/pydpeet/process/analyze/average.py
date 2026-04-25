@@ -5,8 +5,8 @@ import pandas as pd
 
 from pydpeet.process.analyze.capacity import add_charge_throughput
 from pydpeet.process.analyze.utils import (
-    StepTimer,
     _check_columns,
+    _StepTimer,
 )
 
 
@@ -98,9 +98,9 @@ def calculate_soh_loss(
 
         return np.float64(np.nan)
 
-    with StepTimer(verbose) as st:
+    with _StepTimer(verbose) as st:
         soh_loss = 1 - soh.min()
-        st.log("computed SOH loss")
+        st._log("computed SOH loss")
 
     return np.float64(soh_loss)
 
@@ -132,9 +132,9 @@ def calculate_soh_loss_per_cycle(
 
         return np.float64(np.nan)
 
-    with StepTimer(verbose) as st:
+    with _StepTimer(verbose) as st:
         soh_loss_per_cycle = soh_loss / max_cycles
-        st.log("computed SOH loss per cycle")
+        st._log("computed SOH loss per cycle")
 
     return np.float64(soh_loss_per_cycle)
 

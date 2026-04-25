@@ -3,7 +3,7 @@ import time
 from typing import Any
 
 
-def measure_time(func) -> Any:
+def _measure_time(func) -> Any:
     """
     A decorator that measures the execution time of a function.
 
@@ -15,7 +15,7 @@ def measure_time(func) -> Any:
         function and prints the time taken to execute it.
     """
 
-    def wrapper(*args, **kwargs) -> Any:
+    def _wrapper(*args, **kwargs) -> Any:
         """
         A wrapped function that, when called, executes the original function and prints the time taken to execute it.
 
@@ -33,4 +33,4 @@ def measure_time(func) -> Any:
 
         return result
 
-    return wrapper
+    return _wrapper

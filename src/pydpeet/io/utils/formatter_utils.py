@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 
 
-def typecast(
+def _typecast(
     df: pd.DataFrame,
     column_name: str,
     datatype,
@@ -45,7 +45,7 @@ def typecast(
     return df
 
 
-def testtime_hours_to_seconds_with_string_interpretation(
+def _testtime_hours_to_seconds_with_string_interpretation(
     df: pd.DataFrame,
     astype_string: bool,
 ) -> pd.DataFrame:
@@ -115,7 +115,7 @@ def _time_to_seconds(time: str) -> float | None:
         return float(time)
 
 
-def apply_convert_to_float_if_possible(
+def _apply_convert_to_float_if_possible(
     df: pd.DataFrame,
     column_name: str,
 ) -> pd.DataFrame:
@@ -176,9 +176,9 @@ def _convert_to_float_if_possible(x) -> float | Any:
         return x
 
 
-def replace_empty_with_none_in_standard_columns(df: pd.DataFrame) -> pd.DataFrame:
+def _replace_empty_with_none_in_standard_columns(df: pd.DataFrame) -> pd.DataFrame:
     """
-    Replace empty strings with None in the columns specified in src.convert.STANDARD_COLUMNS.
+    Replace empty strings with None in the columns specified in _STANDARD_COLUMNS.
 
     Parameters
     ----------
@@ -190,21 +190,21 @@ def replace_empty_with_none_in_standard_columns(df: pd.DataFrame) -> pd.DataFram
     pandas.DataFrame
         Modified DataFrame
     """
-    from pydpeet.io.convert import STANDARD_COLUMNS
+    from pydpeet.io.configs.config import _STANDARD_COLUMNS
 
     try:
         if df is None:
             raise ValueError("dataFrame is None")
         if df.empty:
             raise ValueError("dataframe is empty")
-        df[STANDARD_COLUMNS] = df[STANDARD_COLUMNS].replace("", None)
+        df[_STANDARD_COLUMNS] = df[_STANDARD_COLUMNS].replace("", None)
     except Exception as e:
         logging.warning(f"Error replacing empty with None. Reason: {e}")
 
     return df
 
 
-def testtime_hours_to_seconds_direct(df: pd.DataFrame) -> pd.DataFrame:
+def _testtime_hours_to_seconds_direct(df: pd.DataFrame) -> pd.DataFrame:
     """
     Convert "Test_Time[s]" column from hours to seconds.
 
@@ -254,7 +254,7 @@ def _convert_to_hours_to_seconds_direct_if_possible(x) -> float | Any:
         return x
 
 
-def round_testtime(df: pd.DataFrame) -> pd.DataFrame:
+def _round_testtime(df: pd.DataFrame) -> pd.DataFrame:
     """
     Round the values in the "Test_Time[s]" column of the DataFrame to 5 decimal places.
 
@@ -283,7 +283,7 @@ def round_testtime(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-def nan_to_none_in_column(
+def _nan_to_none_in_column(
     df: pd.DataFrame,
     column_name: str,
 ) -> pd.DataFrame:
@@ -318,7 +318,7 @@ def nan_to_none_in_column(
     return df
 
 
-def move_strings_from_column_to_metadata(
+def _move_strings_from_column_to_metadata(
     df: pd.DataFrame,
     column_name: str,
 ) -> pd.DataFrame:
@@ -364,7 +364,7 @@ def move_strings_from_column_to_metadata(
     return df
 
 
-def fix_time_format(
+def _fix_time_format(
     df: pd.DataFrame,
     input_format: Optional[str] = None,
 ) -> pd.DataFrame:
@@ -418,7 +418,7 @@ def fix_time_format(
     return df
 
 
-def absolute_time_timedate_typecast(df: pd.DataFrame) -> pd.DataFrame:
+def _absolute_time_timedate_typecast(df: pd.DataFrame) -> pd.DataFrame:
     """
     Convert the "Date_Time" column in the DataFrame to a datetime object.
 

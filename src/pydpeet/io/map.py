@@ -2,7 +2,7 @@ import logging
 
 import pandas as pd
 
-from pydpeet.io.configs.config import STANDARD_COLUMNS
+from pydpeet.io.configs.config import _STANDARD_COLUMNS
 from pydpeet.utils.guardrails import _guardrail_dataframe
 
 
@@ -48,10 +48,10 @@ def mapping(
         raise ValueError("column_map is not a dictionary")
     if type(missing_columns) is not list:
         raise ValueError("missing_columns is not a list")
-    standard_columns_excluding_metadata = [col for col in STANDARD_COLUMNS if not col.startswith("Meta_Data")]
+    standard_columns_excluding_metadata = [col for col in _STANDARD_COLUMNS if not col.startswith("Meta_Data")]
     if not all(col in list(column_map.values()) + missing_columns for col in standard_columns_excluding_metadata):
         raise ValueError("column_map and missing_columns do not contain all standard columns")
-    if any(col not in STANDARD_COLUMNS for col in list(column_map.values()) + missing_columns):
+    if any(col not in _STANDARD_COLUMNS for col in list(column_map.values()) + missing_columns):
         raise ValueError("column_map and missing_columns contain columns that are not standard columns")
 
     # Create a copy of the DataFrame to avoid modifying the original

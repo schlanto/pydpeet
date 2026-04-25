@@ -2,7 +2,7 @@ import pandas as pd
 import pytest
 
 from pydpeet.res.res_for_unittests.res import Mocks
-from pydpeet.utils.assert_raises_and_print import assert_raises_and_print
+from pydpeet.utils.assert_raises_and_print import _assert_raises_and_print
 from src.pydpeet import merge_into_series
 
 
@@ -54,12 +54,12 @@ class Test_merge_into_series_verbose:
 
     def test_none(self, base_args):
         base_args["verbose"] = None
-        assert_raises_and_print(ValueError, merge_into_series, **base_args)
+        _assert_raises_and_print(ValueError, merge_into_series, **base_args)
 
     def test_wrong_type(self, base_args):
         base_args["verbose"] = "wrong type"
         assert not isinstance(base_args["verbose"], bool)
-        assert_raises_and_print(ValueError, merge_into_series, **base_args)
+        _assert_raises_and_print(ValueError, merge_into_series, **base_args)
 
 
 class Test_merge_into_series_sort_dfs:
@@ -83,12 +83,12 @@ class Test_merge_into_series_sort_dfs:
 
     def test_none(self, base_args):
         base_args["sort_dfs"] = None
-        assert_raises_and_print(ValueError, merge_into_series, **base_args)
+        _assert_raises_and_print(ValueError, merge_into_series, **base_args)
 
     def test_wrong_type(self, base_args):
         base_args["sort_dfs"] = "wrong type"
         assert not isinstance(base_args["sort_dfs"], bool)
-        assert_raises_and_print(ValueError, merge_into_series, **base_args)
+        _assert_raises_and_print(ValueError, merge_into_series, **base_args)
 
 
 class Test_merge_into_series_dfs:

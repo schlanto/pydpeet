@@ -5,7 +5,7 @@ import pandas as pd
 import pytest
 
 from pydpeet.res.res_for_unittests.res import Mocks
-from pydpeet.utils.assert_raises_and_print import assert_raises_and_print
+from pydpeet.utils.assert_raises_and_print import _assert_raises_and_print
 from src.pydpeet import filter_and_split_df_by_blocks
 
 
@@ -37,22 +37,22 @@ class Test_filter_and_split_df_by_blocks_df_segments_and_sequences:
 
     def test_none(self, base_args):
         base_args["df_segments_and_sequences"] = None
-        assert_raises_and_print(ValueError, filter_and_split_df_by_blocks, **base_args)
+        _assert_raises_and_print(ValueError, filter_and_split_df_by_blocks, **base_args)
 
     def test_wrong_type(self, base_args):
         base_args["df_segments_and_sequences"] = "wrong type"
         assert not isinstance(base_args["df_segments_and_sequences"], pd.DataFrame)
-        assert_raises_and_print(ValueError, filter_and_split_df_by_blocks, **base_args)
+        _assert_raises_and_print(ValueError, filter_and_split_df_by_blocks, **base_args)
 
     def test_empty(self, base_args):
         base_args["df_segments_and_sequences"] = pd.DataFrame()
-        assert_raises_and_print(ValueError, filter_and_split_df_by_blocks, **base_args)
+        _assert_raises_and_print(ValueError, filter_and_split_df_by_blocks, **base_args)
 
     def test_missing_required_columns(self, base_args):
         base_args["df_segments_and_sequences"] = base_args["df_segments_and_sequences"].drop(
             Mocks.Mock_filter_and_split_df_by_blocks.required_columns_df_segments, axis=1
         )
-        assert_raises_and_print(ValueError, filter_and_split_df_by_blocks, **base_args)
+        _assert_raises_and_print(ValueError, filter_and_split_df_by_blocks, **base_args)
 
     def test_wrong_column_dtypes(self, base_args):
         for col, _dtype in Mocks.Mock_filter_and_split_df_by_blocks.required_columns_dtypes_df_segments:
@@ -64,7 +64,7 @@ class Test_filter_and_split_df_by_blocks_df_segments_and_sequences:
             Mocks.Mock_filter_and_split_df_by_blocks.required_columns_df_segments
         ].dtypes
         assert not actual_dtypes.equals(expected_dtypes)
-        assert_raises_and_print(ValueError, filter_and_split_df_by_blocks, **base_args)
+        _assert_raises_and_print(ValueError, filter_and_split_df_by_blocks, **base_args)
 
     def test_nan_values(self, base_args, caplog):
         # Skip - df_segments_and_sequences has no float columns to test NaN on
@@ -95,22 +95,22 @@ class Test_filter_and_split_df_by_blocks_df_primitives:
 
     def test_none(self, base_args):
         base_args["df_primitives"] = None
-        assert_raises_and_print(ValueError, filter_and_split_df_by_blocks, **base_args)
+        _assert_raises_and_print(ValueError, filter_and_split_df_by_blocks, **base_args)
 
     def test_wrong_type(self, base_args):
         base_args["df_primitives"] = "wrong type"
         assert not isinstance(base_args["df_primitives"], pd.DataFrame)
-        assert_raises_and_print(ValueError, filter_and_split_df_by_blocks, **base_args)
+        _assert_raises_and_print(ValueError, filter_and_split_df_by_blocks, **base_args)
 
     def test_empty(self, base_args):
         base_args["df_primitives"] = pd.DataFrame()
-        assert_raises_and_print(ValueError, filter_and_split_df_by_blocks, **base_args)
+        _assert_raises_and_print(ValueError, filter_and_split_df_by_blocks, **base_args)
 
     def test_missing_required_columns(self, base_args):
         base_args["df_primitives"] = base_args["df_primitives"].drop(
             Mocks.Mock_filter_and_split_df_by_blocks.required_columns_df_primitives, axis=1
         )
-        assert_raises_and_print(ValueError, filter_and_split_df_by_blocks, **base_args)
+        _assert_raises_and_print(ValueError, filter_and_split_df_by_blocks, **base_args)
 
     def test_wrong_column_dtypes(self, base_args):
         for col, _dtype in Mocks.Mock_filter_and_split_df_by_blocks.required_columns_dtypes_df_primitives:
@@ -125,7 +125,7 @@ class Test_filter_and_split_df_by_blocks_df_primitives:
             Mocks.Mock_filter_and_split_df_by_blocks.required_columns_df_primitives
         ].dtypes
         assert not actual_dtypes.equals(expected_dtypes)
-        assert_raises_and_print(ValueError, filter_and_split_df_by_blocks, **base_args)
+        _assert_raises_and_print(ValueError, filter_and_split_df_by_blocks, **base_args)
 
     def test_nan_values(self, base_args, caplog):
         col = Mocks.Mock_filter_and_split_df_by_blocks.nan_inf_test_column_df_primitives
@@ -182,12 +182,12 @@ class Test_filter_and_split_df_by_blocks_print_blocks:
 
     def test_none(self, base_args):
         base_args["print_blocks"] = None
-        assert_raises_and_print(ValueError, filter_and_split_df_by_blocks, **base_args)
+        _assert_raises_and_print(ValueError, filter_and_split_df_by_blocks, **base_args)
 
     def test_wrong_type(self, base_args):
         base_args["print_blocks"] = "wrong type"
         assert not isinstance(base_args["print_blocks"], bool)
-        assert_raises_and_print(ValueError, filter_and_split_df_by_blocks, **base_args)
+        _assert_raises_and_print(ValueError, filter_and_split_df_by_blocks, **base_args)
 
 
 class Test_filter_and_split_df_by_blocks_also_return_filtered_df:
@@ -208,9 +208,9 @@ class Test_filter_and_split_df_by_blocks_also_return_filtered_df:
 
     def test_none(self, base_args):
         base_args["also_return_filtered_df"] = None
-        assert_raises_and_print(ValueError, filter_and_split_df_by_blocks, **base_args)
+        _assert_raises_and_print(ValueError, filter_and_split_df_by_blocks, **base_args)
 
     def test_wrong_type(self, base_args):
         base_args["also_return_filtered_df"] = "wrong type"
         assert not isinstance(base_args["also_return_filtered_df"], bool)
-        assert_raises_and_print(ValueError, filter_and_split_df_by_blocks, **base_args)
+        _assert_raises_and_print(ValueError, filter_and_split_df_by_blocks, **base_args)

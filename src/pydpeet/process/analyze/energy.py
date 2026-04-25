@@ -7,8 +7,8 @@ from scipy import integrate
 from pydpeet.process.analyze.configs.battery_config import BatteryConfig
 from pydpeet.process.analyze.power import add_power
 from pydpeet.process.analyze.utils import (
-    StepTimer,
     _check_columns,
+    _StepTimer,
 )
 
 
@@ -39,15 +39,15 @@ def add_cumulative_energy(
     df_mod = df.copy()
     if "Power[W]" not in df_mod.columns:
         logging.info("Power[W] column missing → adding via add_power.")
-        with StepTimer(verbose) as st:
+        with _StepTimer(verbose) as st:
             df_mod = add_power(df_mod)
-            st.log("added Power[W] column")
+            st._log("added Power[W] column")
 
-    with StepTimer(verbose) as st:
+    with _StepTimer(verbose) as st:
         _check_columns(df_mod, ["Test_Time[s]", "Power[W]"])
         df_mod["CumulativeEnergy[Wh]"] = (
             integrate.cumulative_trapezoid(df_mod["Power[W]"], x=df_mod["Test_Time[s]"], initial=0) / 3600
         )
-        st.log("calculated CumulativeEnergy[Wh]")
+        st._log("calculated CumulativeEnergy[Wh]")
 
     return df_mod

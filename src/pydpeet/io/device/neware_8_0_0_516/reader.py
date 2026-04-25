@@ -13,7 +13,7 @@ from pydpeet.io.configs.const import PANDAS_EXCEL_ENGINE
 _BASE_CHILD_FILE_PATTERN = r"_(\d+).(xlsx|xls)"
 
 
-def to_dataframe(input_path: str) -> tuple[pd.DataFrame, str]:
+def _to_dataframe(input_path: str) -> tuple[pd.DataFrame, str]:
     """
     Parses the input file from the Neware Cycler into a pandas DataFrame.
 
@@ -102,7 +102,7 @@ def _find_children(main_file_path) -> list[str]:
     return child_file_paths
 
 
-def find_main_files(input_path: str) -> list[str]:
+def _find_main_files(input_path: str) -> list[str]:
     """
     Finds all main Excel files in the specified directory.
 

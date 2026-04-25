@@ -6,7 +6,7 @@ import pandas as pd
 
 from pydpeet.process.analyze.capacity import add_capacity
 from pydpeet.process.analyze.configs.battery_config import BatteryConfig
-from pydpeet.process.analyze.utils import StepTimer
+from pydpeet.process.analyze.utils import _StepTimer
 
 
 def add_soh(
@@ -40,12 +40,12 @@ def add_soh(
 
     if "Capacity[Ah]" not in df_mod.columns:
         logging.info("Capacity[Ah] not found, adding Capacity column with add_capacity function...")
-        with StepTimer(verbose) as st:
+        with _StepTimer(verbose) as st:
             if df_primitives is None:
                 logging.info("df_primitives is None, please provide a valid df_primitives for add_capacity function")
             else:
                 df_mod = add_capacity(df_mod, neware_bool, df_primitives, config, verbose=verbose)
-                st.log("added capacity column to df")
+                st._log("added capacity column to df")
                 first_valid_idx = df_mod["Capacity[Ah]"].first_valid_index()
                 if first_valid_idx is None:
                     logging.warning("No valid capacity values found — returning DataFrame with empty SOH column")
@@ -67,8 +67,8 @@ def add_soh(
             c_ref = df_mod.at[first_valid_idx, "Capacity[Ah]"]
             logging.info(f"Using first valid capacity value ({c_ref:.4f} Ah) as reference")
 
-    with StepTimer(verbose) as st:
+    with _StepTimer(verbose) as st:
         df_mod["SOH"] = df_mod["Capacity[Ah]"].dropna() / c_ref
-        st.log("computed SOH values")
+        st._log("computed SOH values")
 
     return df_mod

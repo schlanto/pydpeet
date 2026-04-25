@@ -2,7 +2,7 @@ import pandas as pd
 import pytest
 
 from pydpeet.res.res_for_unittests.res import Mocks
-from pydpeet.utils.assert_raises_and_print import assert_raises_and_print
+from pydpeet.utils.assert_raises_and_print import _assert_raises_and_print
 from src.pydpeet import convert
 
 
@@ -59,12 +59,12 @@ class Test_convert_keep_all_additional_data:
 
     def test_none(self, base_args):
         base_args["keep_all_additional_data"] = None
-        assert_raises_and_print(ValueError, convert, **base_args)
+        _assert_raises_and_print(ValueError, convert, **base_args)
 
     def test_wrong_type(self, base_args):
         base_args["keep_all_additional_data"] = "wrong type"
         assert not isinstance(base_args["keep_all_additional_data"], bool)
-        assert_raises_and_print(ValueError, convert, **base_args)
+        _assert_raises_and_print(ValueError, convert, **base_args)
 
 
 class Test_convert_custom_folder_path:

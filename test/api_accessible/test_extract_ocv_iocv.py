@@ -5,7 +5,7 @@ import pandas as pd
 import pytest
 
 from pydpeet.res.res_for_unittests.res import Mocks
-from pydpeet.utils.assert_raises_and_print import assert_raises_and_print
+from pydpeet.utils.assert_raises_and_print import _assert_raises_and_print
 from src.pydpeet import extract_ocv_iocv
 
 
@@ -58,25 +58,25 @@ class Test_extract_ocv_iocv_df_primitives:
     def test_none(self, base_args):
         base_args["df"] = None
         base_args["df_primitives"] = None
-        assert_raises_and_print(ValueError, extract_ocv_iocv, **base_args)
+        _assert_raises_and_print(ValueError, extract_ocv_iocv, **base_args)
 
     def test_wrong_type(self, base_args):
         base_args["df"] = None
         base_args["df_primitives"] = "wrong type"
         assert not isinstance(base_args["df_primitives"], pd.DataFrame)
-        assert_raises_and_print(ValueError, extract_ocv_iocv, **base_args)
+        _assert_raises_and_print(ValueError, extract_ocv_iocv, **base_args)
 
     def test_empty(self, base_args):
         base_args["df"] = None
         base_args["df_primitives"] = pd.DataFrame()
-        assert_raises_and_print(ValueError, extract_ocv_iocv, **base_args)
+        _assert_raises_and_print(ValueError, extract_ocv_iocv, **base_args)
 
     def test_missing_required_columns(self, base_args):
         base_args["df"] = None
         base_args["df_primitives"] = base_args["df_primitives"].drop(
             Mocks.Mock_extract_ocv_iocv.required_columns_df_primitives, axis=1
         )
-        assert_raises_and_print(ValueError, extract_ocv_iocv, **base_args)
+        _assert_raises_and_print(ValueError, extract_ocv_iocv, **base_args)
 
     def test_wrong_column_dtypes(self, base_args):
         base_args["df"] = None
@@ -87,7 +87,7 @@ class Test_extract_ocv_iocv_df_primitives:
         )
         actual_dtypes = base_args["df_primitives"][Mocks.Mock_extract_ocv_iocv.required_columns_df_primitives].dtypes
         assert not actual_dtypes.equals(expected_dtypes)
-        assert_raises_and_print(ValueError, extract_ocv_iocv, **base_args)
+        _assert_raises_and_print(ValueError, extract_ocv_iocv, **base_args)
 
     def test_nan_values(self, base_args, caplog):
         base_args["df"] = None
@@ -131,23 +131,23 @@ class Test_extract_ocv_iocv_df:
     def test_none(self, base_args):
         base_args["df_primitives"] = None
         base_args["df"] = None
-        assert_raises_and_print(ValueError, extract_ocv_iocv, **base_args)
+        _assert_raises_and_print(ValueError, extract_ocv_iocv, **base_args)
 
     def test_wrong_type(self, base_args):
         base_args["df_primitives"] = None
         base_args["df"] = "wrong type"
         assert not isinstance(base_args["df"], pd.DataFrame)
-        assert_raises_and_print(ValueError, extract_ocv_iocv, **base_args)
+        _assert_raises_and_print(ValueError, extract_ocv_iocv, **base_args)
 
     def test_empty(self, base_args):
         base_args["df_primitives"] = None
         base_args["df"] = pd.DataFrame()
-        assert_raises_and_print(ValueError, extract_ocv_iocv, **base_args)
+        _assert_raises_and_print(ValueError, extract_ocv_iocv, **base_args)
 
     def test_missing_required_columns(self, base_args):
         base_args["df_primitives"] = None
         base_args["df"] = base_args["df"].drop(Mocks.Mock_extract_ocv_iocv.required_columns_df, axis=1)
-        assert_raises_and_print(ValueError, extract_ocv_iocv, **base_args)
+        _assert_raises_and_print(ValueError, extract_ocv_iocv, **base_args)
 
     def test_wrong_column_dtypes(self, base_args):
         base_args["df_primitives"] = None
@@ -158,7 +158,7 @@ class Test_extract_ocv_iocv_df:
         )
         actual_dtypes = base_args["df"][Mocks.Mock_extract_ocv_iocv.required_columns_df].dtypes
         assert not actual_dtypes.equals(expected_dtypes)
-        assert_raises_and_print(ValueError, extract_ocv_iocv, **base_args)
+        _assert_raises_and_print(ValueError, extract_ocv_iocv, **base_args)
 
     def test_nan_values(self, base_args, caplog):
         base_args["df_primitives"] = None

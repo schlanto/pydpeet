@@ -6,7 +6,7 @@ import pytest
 
 from pydpeet import add_primitive_segments
 from pydpeet.res.res_for_unittests.res import Mocks
-from pydpeet.utils.assert_raises_and_print import assert_raises_and_print
+from pydpeet.utils.assert_raises_and_print import _assert_raises_and_print
 
 
 @pytest.fixture
@@ -46,20 +46,20 @@ class Test_add_primitive_segments_df:
 
     def test_none(self, base_args):
         base_args["df"] = None
-        assert_raises_and_print(ValueError, add_primitive_segments, **base_args)
+        _assert_raises_and_print(ValueError, add_primitive_segments, **base_args)
 
     def test_wrong_type(self, base_args):
         base_args["df"] = "wrong type"
         assert not isinstance(base_args["df"], pd.DataFrame)
-        assert_raises_and_print(ValueError, add_primitive_segments, **base_args)
+        _assert_raises_and_print(ValueError, add_primitive_segments, **base_args)
 
     def test_empty(self, base_args):
         base_args["df"] = pd.DataFrame()
-        assert_raises_and_print(ValueError, add_primitive_segments, **base_args)
+        _assert_raises_and_print(ValueError, add_primitive_segments, **base_args)
 
     def test_missing_required_columns(self, base_args):
         base_args["df"] = base_args["df"].drop(Mocks.Mock_add_primitive_segments.required_columns, axis=1)
-        assert_raises_and_print(ValueError, add_primitive_segments, **base_args)
+        _assert_raises_and_print(ValueError, add_primitive_segments, **base_args)
 
     def test_wrong_column_dtypes(self, base_args):
         for col, _dtype in Mocks.Mock_add_primitive_segments.required_columns_dtypes:
@@ -69,7 +69,7 @@ class Test_add_primitive_segments_df:
         )
         actual_dtypes = base_args["df"][Mocks.Mock_add_primitive_segments.required_columns].dtypes
         assert not actual_dtypes.equals(expected_dtypes)
-        assert_raises_and_print(ValueError, add_primitive_segments, **base_args)
+        _assert_raises_and_print(ValueError, add_primitive_segments, **base_args)
 
     def test_nan_values(self, base_args, caplog):
         base_args["df"].loc[:9, Mocks.Mock_add_primitive_segments.required_columns[0]] = np.nan
@@ -221,7 +221,7 @@ class Test_add_primitive_segments_SHOW_RUNTIME:
     def test_wrong_type(self, base_args):
         base_args["SHOW_RUNTIME"] = "wrong type"
         assert not isinstance(base_args["SHOW_RUNTIME"], bool)
-        assert_raises_and_print(ValueError, add_primitive_segments, **base_args)
+        _assert_raises_and_print(ValueError, add_primitive_segments, **base_args)
 
 
 class Test_add_primitive_segments_check_CV_0Aend_segments_bool:
@@ -250,7 +250,7 @@ class Test_add_primitive_segments_check_CV_0Aend_segments_bool:
     def test_wrong_type(self, base_args):
         base_args["check_CV_0Aend_segments_bool"] = "wrong type"
         assert not isinstance(base_args["check_CV_0Aend_segments_bool"], bool)
-        assert_raises_and_print(ValueError, add_primitive_segments, **base_args)
+        _assert_raises_and_print(ValueError, add_primitive_segments, **base_args)
 
 
 class Test_add_primitive_segments_check_zero_length_segments_bool:
@@ -279,7 +279,7 @@ class Test_add_primitive_segments_check_zero_length_segments_bool:
     def test_wrong_type(self, base_args):
         base_args["check_zero_length_segments_bool"] = "wrong type"
         assert not isinstance(base_args["check_zero_length_segments_bool"], bool)
-        assert_raises_and_print(ValueError, add_primitive_segments, **base_args)
+        _assert_raises_and_print(ValueError, add_primitive_segments, **base_args)
 
 
 class Test_add_primitive_segments_check_Power_zero_W_segments_bool:
@@ -308,7 +308,7 @@ class Test_add_primitive_segments_check_Power_zero_W_segments_bool:
     def test_wrong_type(self, base_args):
         base_args["check_Power_zero_W_segments_bool"] = "wrong type"
         assert not isinstance(base_args["check_Power_zero_W_segments_bool"], bool)
-        assert_raises_and_print(ValueError, add_primitive_segments, **base_args)
+        _assert_raises_and_print(ValueError, add_primitive_segments, **base_args)
 
 
 class Test_add_primitive_segments_supress_IO_warnings:
@@ -346,7 +346,7 @@ class Test_add_primitive_segments_supress_IO_warnings:
     def test_wrong_type(self, base_args):
         base_args["supress_IO_warnings"] = "wrong type"
         assert not isinstance(base_args["supress_IO_warnings"], bool)
-        assert_raises_and_print(ValueError, add_primitive_segments, **base_args)
+        _assert_raises_and_print(ValueError, add_primitive_segments, **base_args)
 
 
 class Test_add_primitive_segments_PRECOMPILE:
@@ -384,7 +384,7 @@ class Test_add_primitive_segments_PRECOMPILE:
     def test_wrong_type(self, base_args):
         base_args["PRECOMPILE"] = "wrong type"
         assert not isinstance(base_args["PRECOMPILE"], bool)
-        assert_raises_and_print(ValueError, add_primitive_segments, **base_args)
+        _assert_raises_and_print(ValueError, add_primitive_segments, **base_args)
 
 
 class Test_add_primitive_segments_FORCE_PRECOMPILATION:
@@ -422,4 +422,4 @@ class Test_add_primitive_segments_FORCE_PRECOMPILATION:
     def test_wrong_type(self, base_args):
         base_args["FORCE_PRECOMPILATION"] = "wrong type"
         assert not isinstance(base_args["FORCE_PRECOMPILATION"], bool)
-        assert_raises_and_print(ValueError, add_primitive_segments, **base_args)
+        _assert_raises_and_print(ValueError, add_primitive_segments, **base_args)

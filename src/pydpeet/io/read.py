@@ -6,14 +6,14 @@ from typing import Optional, TypeAlias  # Add this import
 
 import pandas as pd
 
-from pydpeet.io.configs.config import Config
+from pydpeet.io.configs.config import ReadConfig
 from pydpeet.io.convert import (
     convert_file,
     convert_files_in_directory,
 )
 from pydpeet.utils.guardrails import _guardrail_boolean
 
-ConfigLike: TypeAlias = Config | str
+ConfigLike: TypeAlias = ReadConfig | str
 PathLike: TypeAlias = str | Path
 
 

@@ -9,7 +9,7 @@ from pydpeet.process.analyze.average import (
     calculate_total_discharge,
 )
 from pydpeet.process.analyze.configs.battery_config import BatteryConfig
-from pydpeet.process.analyze.utils import StepTimer
+from pydpeet.process.analyze.utils import _StepTimer
 
 
 def add_efficiency_coulomb(
@@ -95,13 +95,13 @@ def add_efficiency_coulomb(
             ):
                 start_time = pd.to_datetime(block[time_col].iloc[0]) if parse_time else block[time_col].iloc[0]
                 end_time = pd.to_datetime(block[time_col].iloc[-1]) if parse_time else block[time_col].iloc[-1]
-                with StepTimer(verbose) as timer:
+                with _StepTimer(verbose) as timer:
                     total = (
                         calculate_total_charge(block)
                         if total_col_name == "total_charge"
                         else calculate_total_discharge(block)
                     )
-                    timer.log(f"calculated {total_col_name} for one block")
+                    timer._log(f"calculated {total_col_name} for one block")
                 summary.append(
                     {
                         "start_time": start_time,
@@ -115,10 +115,10 @@ def add_efficiency_coulomb(
         return pd.DataFrame(summary).sort_values("start_time")
 
     # Helper to find matching blocks
-    with StepTimer(verbose) as st:
+    with _StepTimer(verbose) as st:
         charge_df = summarize_blocks(df_blocks_charge, "total_charge")
         discharge_df = summarize_blocks(df_blocks_discharge, "total_discharge")
-        st.log("summarized all charge/discharge blocks")
+        st._log("summarized all charge/discharge blocks")
 
     if charge_df.empty or discharge_df.empty:
         logging.info("No valid charge/discharge blocks found. Skipping Coulomb Efficiency computation.")
@@ -136,7 +136,7 @@ def add_efficiency_coulomb(
     discharge_df = discharge_df.sort_values("start_time").reset_index(drop=True)
 
     # Forward merge: discharge after charge
-    with StepTimer(verbose) as st:
+    with _StepTimer(verbose) as st:
         paired_forward = pd.merge_asof(
             charge_df,
             discharge_df,
@@ -145,10 +145,10 @@ def add_efficiency_coulomb(
             direction="forward",
             tolerance=tolerance_val,
         )
-        st.log("performed forward merge of charge/discharge blocks")
+        st._log("performed forward merge of charge/discharge blocks")
 
     # Backward merge: discharge before charge
-    with StepTimer(verbose) as st:
+    with _StepTimer(verbose) as st:
         paired_backward = pd.merge_asof(
             charge_df,
             discharge_df,
@@ -157,10 +157,10 @@ def add_efficiency_coulomb(
             direction="backward",
             tolerance=tolerance_val,
         )
-        st.log("performed backward merge of charge/discharge blocks")
+        st._log("performed backward merge of charge/discharge blocks")
 
     # Combine forward/backward and pick closest in absolute time
-    with StepTimer(verbose) as st:
+    with _StepTimer(verbose) as st:
         combined = pd.concat([paired_forward, paired_backward], ignore_index=True, sort=False)
         combined["time_diff"] = (
             pd.to_datetime(combined["start_time_y"]) - pd.to_datetime(combined["end_time_x"])
@@ -179,6 +179,6 @@ def add_efficiency_coulomb(
             # Use nan-safe max and cast to int to avoid type checker complaints about comparing Series
             last_index = int(np.nanmax([row.get("last_index_x", np.nan), row.get("last_index_y", np.nan)]))
             df_mod.loc[last_index, "CoulombEfficiency"] = ce
-        st.log("assigned Coulomb Efficiency to dataframe")
+        st._log("assigned Coulomb Efficiency to dataframe")
 
     return df_mod

@@ -10,22 +10,22 @@ import pandas as pd
 from pandas import Index
 
 from pydpeet.io.configs.config import (
-    FORMATTER_CONFIGS,
-    MAPPER_CONFIGS,
-    READER_CONFIGS,
-    STANDARD_COLUMNS,
-    Config,
+    _FORMATTER_CONFIGS,
+    _MAPPER_CONFIGS,
+    _READER_CONFIGS,
+    _STANDARD_COLUMNS,
     DataOutputFiletype,
+    ReadConfig,
 )
-from pydpeet.io.device.neware_8_0_0_516.reader import find_main_files
+from pydpeet.io.device.neware_8_0_0_516.reader import _find_main_files
 from pydpeet.io.map import mapping
 from pydpeet.io.utils.ext_path import ExtPath
 from pydpeet.io.utils.load_custom_module import load_custom_module
-from pydpeet.io.utils.timing import measure_time
+from pydpeet.io.utils.timing import _measure_time
 from pydpeet.io.write import write
 from pydpeet.utils.guardrails import _guardrail_boolean
 
-ConfigLike: TypeAlias = Config | str
+ConfigLike: TypeAlias = ReadConfig | str
 PathLike: TypeAlias = str | Path
 
 
@@ -72,7 +72,7 @@ def convert(
 
 
 # TODO: Add output path functionality
-@measure_time
+@_measure_time
 def convert_file(
     config: ConfigLike,
     input_path: str,
@@ -85,7 +85,7 @@ def convert_file(
 
     Parameters
     ----------
-    config : Config
+    config : ReadConfig
         The configuration to use for standardizing the file.
     input_path : str
         The path to the file to standardize.
@@ -103,12 +103,12 @@ def convert_file(
         The standardized DataFrame.
     """
     if isinstance(config, str):
-        config = Config.from_string(config)
-    if Config.not_exists(config):
-        raise ValueError("Config must be provided!")
-    if ExtPath.is_not_valid(input_path):
+        config = ReadConfig._from_string(config)
+    if ReadConfig._not_exists(config):
+        raise ValueError("ReadConfig must be provided!")
+    if ExtPath._is_not_valid(input_path):
         raise ValueError("Input_path must be provided!")
-    if custom_folder_path is not None and ExtPath.is_not_valid(custom_folder_path):
+    if custom_folder_path is not None and ExtPath._is_not_valid(custom_folder_path):
         raise ValueError("Custom_folder_path must be valid if provided!")
 
     df, meta_data = _convert_file_to_pandas_data_frame(config, input_path, custom_folder_path)
@@ -123,9 +123,9 @@ def convert_file(
 
 
 # TODO: Implement better way of handling case where output_path is None?
-@measure_time
+@_measure_time
 def convert_files_in_directory(
-    config: Config,
+    config: ReadConfig,
     input_path: str,
     output_path: Optional[str] = None,
     keep_all_additional_data: bool = False,
@@ -136,7 +136,7 @@ def convert_files_in_directory(
 
     Parameters
     ----------
-    config : Config
+    config : ReadConfig
         The configuration to use for standardizing the directory.
     input_path : str
         The path to the directory to standardize.
@@ -151,7 +151,7 @@ def convert_files_in_directory(
         formatter reference for the given configuration.
     """
     if config is None:
-        raise ValueError("Config must be provided!")
+        raise ValueError("ReadConfig must be provided!")
     if input_path is None:
         raise ValueError("Input_path must be provided!")
     # if output_path is None:
@@ -168,8 +168,8 @@ def convert_files_in_directory(
     else:
         config_name = config.name
 
-    if config == Config.Neware_8_0_0_516:
-        files = find_main_files(input_path)
+    if config == ReadConfig.Neware_8_0_0_516:
+        files = _find_main_files(input_path)
     else:
         files = os.listdir(input_path)
 
@@ -205,7 +205,7 @@ def convert_files_in_directory(
 
 
 def _process_file(
-    config: Config,
+    config: ReadConfig,
     config_name: str,
     current_date: str,
     custom_folder_path: Optional[str],
@@ -218,7 +218,7 @@ def _process_file(
 
     Parameters
     ----------
-    config : Config
+    config : ReadConfig
         The configuration to use for standardizing the file.
     config_name : str
         The name of the configuration.
@@ -250,7 +250,7 @@ def _process_file(
 
 
 def _process_file_and_export(
-    config: Config,
+    config: ReadConfig,
     config_name: str,
     current_date: str,
     custom_folder_path: Optional[str],
@@ -265,7 +265,7 @@ def _process_file_and_export(
 
     Parameters
     ----------
-    config : Config
+    config : ReadConfig
         The configuration to use for standardizing the file.
     config_name : str
         The name of the configuration.
@@ -296,7 +296,7 @@ def _process_file_and_export(
 
 
 def _convert_file_to_pandas_data_frame(
-    config: Config,
+    config: ReadConfig,
     input_path: str,
     custom_folder: Optional[str] = None,
 ) -> tuple[pd.DataFrame, str]:
@@ -305,7 +305,7 @@ def _convert_file_to_pandas_data_frame(
 
     Parameters
     ----------
-    config : Config
+    config : ReadConfig
         The configuration to use for converting the file.
     input_path : str
         The path to the file to convert.
@@ -320,29 +320,29 @@ def _convert_file_to_pandas_data_frame(
     """
     logging.info("converting file to pandas DataFrame...")
 
-    if Config.not_exists(config):
-        raise ValueError(f"Unknown config: {config}")
+    if ReadConfig._not_exists(config):
+        raise ValueError(f"Unknown ReadConfig: {config}")
 
     df = None
     meta_data = ""
-    if config == Config.Custom:
-        if ExtPath.is_not_valid(custom_folder):
-            raise ValueError(f"Custom folder path must be provided for {Config.Custom}!")
+    if config == ReadConfig.Custom:
+        if ExtPath._is_not_valid(custom_folder):
+            raise ValueError(f"Custom folder path must be provided for {ReadConfig.Custom}!")
 
         custom_reader = load_custom_module(custom_folder, "Reader")
         if custom_reader.to_data_frame is None:
             raise ValueError("to_data_frame in custom reader is None.")
 
         df, meta_data = custom_reader.to_data_frame(input_path)
-    elif config in READER_CONFIGS:
-        df, meta_data = READER_CONFIGS[config](input_path)
+    elif config in _READER_CONFIGS:
+        df, meta_data = _READER_CONFIGS[config](input_path)
 
     return df, meta_data
 
 
 def _column_mapping(
     df: pd.DataFrame,
-    config: Config,
+    config: ReadConfig,
     custom_folder: Optional[str] = None,
 ) -> pd.DataFrame:
     """
@@ -352,7 +352,7 @@ def _column_mapping(
     ----------
     data_frame : DataFrame
         The DataFrame to map the columns of.
-    config : Config
+    config : ReadConfig
         The configuration to use for mapping the columns.
     custom_folder : str, optional
         The path to the directory containing the custom mapper module for the given configuration.
@@ -366,15 +366,15 @@ def _column_mapping(
 
     if df is None:
         raise ValueError("Data frame is None.")
-    if Config.not_exists(config):
-        raise ValueError(f"Unknown config: {config}")
+    if ReadConfig._not_exists(config):
+        raise ValueError(f"Unknown ReadConfig: {config}")
 
-    if config in MAPPER_CONFIGS:
-        column_map, missing_required_columns = MAPPER_CONFIGS[config]
+    if config in _MAPPER_CONFIGS:
+        column_map, missing_required_columns = _MAPPER_CONFIGS[config]  # type: ignore[index]
         return mapping(df, column_map, missing_required_columns)
-    elif config == Config.Custom:
-        if ExtPath.is_not_valid(custom_folder):
-            raise ValueError(f"Custom folder path must be provided for {Config.Custom}!")
+    elif config == ReadConfig.Custom:
+        if ExtPath._is_not_valid(custom_folder):
+            raise ValueError(f"Custom folder path must be provided for {ReadConfig.Custom}!")
 
         custom_mapper = load_custom_module(custom_folder, "Mapper")
 
@@ -388,7 +388,7 @@ def _column_mapping(
 
 def _drop_additional_data(df: pd.DataFrame) -> pd.DataFrame:
     """
-    Drop columns that are not in STANDARD_COLUMNS from a DataFrame.
+    Drop columns that are not in _STANDARD_COLUMNS from a DataFrame.
 
     Parameters
     ----------
@@ -405,7 +405,7 @@ def _drop_additional_data(df: pd.DataFrame) -> pd.DataFrame:
     if df is None:
         raise ValueError("Data frame is None.")
 
-    return df[[col for col in df.columns if col in STANDARD_COLUMNS]]
+    return df[[col for col in df.columns if col in _STANDARD_COLUMNS]]
 
 
 def _add_metadata_to_dataframe(
@@ -479,10 +479,10 @@ def _reorder_columns(df: pd.DataFrame) -> pd.DataFrame:
         df.columns = duplicates_fixed
 
     logging.info("Selecting and ordering standard columns...")
-    ordered_standard_columns = [col for col in STANDARD_COLUMNS if col in df.columns]
+    ordered_standard_columns = [col for col in _STANDARD_COLUMNS if col in df.columns]
 
     logging.info("Selecting extra columns...")
-    extra_columns = [col for col in df.columns if col not in STANDARD_COLUMNS]
+    extra_columns = [col for col in df.columns if col not in _STANDARD_COLUMNS]
 
     logging.info("Combining standard and extra columns...")
     ordered_columns = ordered_standard_columns + extra_columns
@@ -495,7 +495,7 @@ def _reorder_columns(df: pd.DataFrame) -> pd.DataFrame:
 
 def _rename_duplicate_extra_columns(columns: Index) -> Index:
     """
-    Rename columns that are not in STANDARD_COLUMNS to ensure all columns have unique names.
+    Rename columns that are not in _STANDARD_COLUMNS to ensure all columns have unique names.
 
     Parameters
     ----------
@@ -516,7 +516,7 @@ def _rename_duplicate_extra_columns(columns: Index) -> Index:
     duplicate_counts: dict[str, int] = {}
 
     for idx, col_name in enumerate(result):
-        if col_name not in STANDARD_COLUMNS:
+        if col_name not in _STANDARD_COLUMNS:
             count = duplicate_counts.setdefault(col_name, 0)
             if count > 0:
                 result[idx] = f"{col_name}_{count}"
@@ -532,7 +532,7 @@ def _rename_duplicate_extra_columns(columns: Index) -> Index:
 
 def _get_data_into_format(
     df: pd.DataFrame,
-    config: Config,
+    config: ReadConfig,
     custom_folder: Optional[str] = None,
 ) -> pd.DataFrame:
     """
@@ -547,7 +547,7 @@ def _get_data_into_format(
     ----------
     data_frame : DataFrame
         The DataFrame whose data needs to be formatted.
-    config : Config
+    config : ReadConfig
         The configuration determining which formatter to use.
     custom_folder : str, optional
         The path to the directory containing the custom formatter module if the
@@ -571,13 +571,13 @@ def _get_data_into_format(
     if df is None:
         raise ValueError("Data frame is None.")
     if config is None:
-        raise ValueError("Config is None.")
-    if config not in FORMATTER_CONFIGS and config != Config.Custom:
-        raise ValueError(f"Unknown config: {config}")
-    if ExtPath.is_not_valid(custom_folder) and config == Config.Custom:
-        raise ValueError(f"Valid custom folder path must be provided for {Config.Custom}")
+        raise ValueError("ReadConfig is None.")
+    if config not in _FORMATTER_CONFIGS and config != ReadConfig.Custom:
+        raise ValueError(f"Unknown ReadConfig: {config}")
+    if ExtPath._is_not_valid(custom_folder) and config == ReadConfig.Custom:
+        raise ValueError(f"Valid custom folder path must be provided for {ReadConfig.Custom}")
 
-    if config == Config.Custom:
+    if config == ReadConfig.Custom:
         logging.info("Loading custom formatter module...")
         try:
             custom_formatter = load_custom_module(custom_folder, "Formatter")
@@ -588,9 +588,9 @@ def _get_data_into_format(
         except Exception as e:
             raise ValueError(f"Error applying custom formatter: {e}") from e
     else:
-        logging.info(f"Using formatter for config: {config}")
+        logging.info(f"Using formatter for ReadConfig: {config}")
         try:
-            FORMATTER_CONFIGS[config](df)
+            _FORMATTER_CONFIGS[config](df)  # type: ignore[index]
         except Exception as e:
             raise ValueError(f"Error applying formatter: {e}") from e
 

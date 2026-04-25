@@ -5,7 +5,7 @@ import pandas as pd
 import pytest
 
 from pydpeet.res.res_for_unittests.res import Mocks
-from pydpeet.utils.assert_raises_and_print import assert_raises_and_print
+from pydpeet.utils.assert_raises_and_print import _assert_raises_and_print
 from src.pydpeet import visualize_phases
 
 
@@ -38,20 +38,20 @@ class Test_visualize_phases_dataframe:
 
     def test_none(self, base_args):
         base_args["dataframe"] = None
-        assert_raises_and_print(ValueError, visualize_phases, **base_args)
+        _assert_raises_and_print(ValueError, visualize_phases, **base_args)
 
     def test_wrong_type(self, base_args):
         base_args["dataframe"] = "wrong type"
         assert not isinstance(base_args["dataframe"], pd.DataFrame)
-        assert_raises_and_print(ValueError, visualize_phases, **base_args)
+        _assert_raises_and_print(ValueError, visualize_phases, **base_args)
 
     def test_empty(self, base_args):
         base_args["dataframe"] = pd.DataFrame()
-        assert_raises_and_print(ValueError, visualize_phases, **base_args)
+        _assert_raises_and_print(ValueError, visualize_phases, **base_args)
 
     def test_missing_required_columns(self, base_args):
         base_args["dataframe"] = base_args["dataframe"].drop(Mocks.Mock_visualize_phases.required_columns, axis=1)
-        assert_raises_and_print(ValueError, visualize_phases, **base_args)
+        _assert_raises_and_print(ValueError, visualize_phases, **base_args)
 
     def test_wrong_column_dtypes(self, base_args):
         for col, _dtype in Mocks.Mock_visualize_phases.required_columns_dtypes:
@@ -59,7 +59,7 @@ class Test_visualize_phases_dataframe:
         expected_dtypes = pd.Series({col: dtype for col, dtype in Mocks.Mock_visualize_phases.required_columns_dtypes})
         actual_dtypes = base_args["dataframe"][Mocks.Mock_visualize_phases.required_columns].dtypes
         assert not actual_dtypes.equals(expected_dtypes)
-        assert_raises_and_print(ValueError, visualize_phases, **base_args)
+        _assert_raises_and_print(ValueError, visualize_phases, **base_args)
 
     def test_nan_values(self, base_args, caplog):
         base_args["dataframe"].loc[:9, Mocks.Mock_visualize_phases.required_columns[0]] = np.nan
@@ -142,12 +142,12 @@ class Test_visualize_phases_use_lines_for_segments:
 
     def test_none(self, base_args):
         base_args["use_lines_for_segments"] = None
-        assert_raises_and_print(ValueError, visualize_phases, **base_args)
+        _assert_raises_and_print(ValueError, visualize_phases, **base_args)
 
     def test_wrong_type(self, base_args):
         base_args["use_lines_for_segments"] = "wrong type"
         assert not isinstance(base_args["use_lines_for_segments"], bool)
-        assert_raises_and_print(ValueError, visualize_phases, **base_args)
+        _assert_raises_and_print(ValueError, visualize_phases, **base_args)
 
 
 class Test_visualize_phases_show_column_names:
@@ -165,12 +165,12 @@ class Test_visualize_phases_show_column_names:
 
     def test_none(self, base_args):
         base_args["show_column_names"] = None
-        assert_raises_and_print(ValueError, visualize_phases, **base_args)
+        _assert_raises_and_print(ValueError, visualize_phases, **base_args)
 
     def test_wrong_type(self, base_args):
         base_args["show_column_names"] = "wrong type"
         assert not isinstance(base_args["show_column_names"], bool)
-        assert_raises_and_print(ValueError, visualize_phases, **base_args)
+        _assert_raises_and_print(ValueError, visualize_phases, **base_args)
 
 
 class Test_visualize_phases_show_time:
@@ -188,12 +188,12 @@ class Test_visualize_phases_show_time:
 
     def test_none(self, base_args):
         base_args["show_time"] = None
-        assert_raises_and_print(ValueError, visualize_phases, **base_args)
+        _assert_raises_and_print(ValueError, visualize_phases, **base_args)
 
     def test_wrong_type(self, base_args):
         base_args["show_time"] = "wrong type"
         assert not isinstance(base_args["show_time"], bool)
-        assert_raises_and_print(ValueError, visualize_phases, **base_args)
+        _assert_raises_and_print(ValueError, visualize_phases, **base_args)
 
 
 class Test_visualize_phases_show_id:
@@ -211,12 +211,12 @@ class Test_visualize_phases_show_id:
 
     def test_none(self, base_args):
         base_args["show_id"] = None
-        assert_raises_and_print(ValueError, visualize_phases, **base_args)
+        _assert_raises_and_print(ValueError, visualize_phases, **base_args)
 
     def test_wrong_type(self, base_args):
         base_args["show_id"] = "wrong type"
         assert not isinstance(base_args["show_id"], bool)
-        assert_raises_and_print(ValueError, visualize_phases, **base_args)
+        _assert_raises_and_print(ValueError, visualize_phases, **base_args)
 
 
 class Test_visualize_phases_width_height_ratio:
@@ -242,9 +242,9 @@ class Test_visualize_phases_show_runtime:
 
     def test_none(self, base_args):
         base_args["show_runtime"] = None
-        assert_raises_and_print(ValueError, visualize_phases, **base_args)
+        _assert_raises_and_print(ValueError, visualize_phases, **base_args)
 
     def test_wrong_type(self, base_args):
         base_args["show_runtime"] = "wrong type"
         assert not isinstance(base_args["show_runtime"], bool)
-        assert_raises_and_print(ValueError, visualize_phases, **base_args)
+        _assert_raises_and_print(ValueError, visualize_phases, **base_args)

@@ -5,7 +5,7 @@ import pandas as pd
 import pytest
 
 from pydpeet.res.res_for_unittests.res import Mocks
-from pydpeet.utils.assert_raises_and_print import assert_raises_and_print
+from pydpeet.utils.assert_raises_and_print import _assert_raises_and_print
 from src.pydpeet import mapping
 
 
@@ -33,20 +33,20 @@ class Test_mapping_data_frame:
 
     def test_none(self, base_args):
         base_args["data_frame"] = None
-        assert_raises_and_print(ValueError, mapping, **base_args)
+        _assert_raises_and_print(ValueError, mapping, **base_args)
 
     def test_wrong_type(self, base_args):
         base_args["data_frame"] = "wrong type"
         assert not isinstance(base_args["data_frame"], pd.DataFrame)
-        assert_raises_and_print(ValueError, mapping, **base_args)
+        _assert_raises_and_print(ValueError, mapping, **base_args)
 
     def test_empty(self, base_args):
         base_args["data_frame"] = pd.DataFrame()
-        assert_raises_and_print(ValueError, mapping, **base_args)
+        _assert_raises_and_print(ValueError, mapping, **base_args)
 
     def test_missing_required_columns(self, base_args):
         base_args["data_frame"] = base_args["data_frame"].drop(Mocks.Mock_mapping.required_columns, axis=1)
-        assert_raises_and_print(ValueError, mapping, **base_args)
+        _assert_raises_and_print(ValueError, mapping, **base_args)
 
     def test_wrong_column_dtypes(self, base_args):
         # Mapping function only renames columns, doesn't validate dtypes

@@ -65,7 +65,7 @@ import pydpeet.io.device.zahner_new.mapper as zahner_new_mapper
 import pydpeet.io.device.zahner_new.reader as zahner_new_reader
 
 
-class Config(Enum):
+class ReadConfig(Enum):
     Zahner_1 = auto()
     Zahner_2 = auto()
     Zahner_new_1 = auto()
@@ -82,9 +82,9 @@ class Config(Enum):
     Custom = auto()
 
     @classmethod
-    def from_string(cls, value: str) -> "Config":
+    def _from_string(cls, value: str) -> "ReadConfig":
         if not isinstance(value, str):
-            raise TypeError("Config must be str or Config enum")
+            raise TypeError("ReadConfig must be str or ReadConfig enum")
 
         key = value.strip().lower()
 
@@ -109,23 +109,25 @@ class Config(Enum):
             raise ValueError(f"Unknown config '{value}'. Known: {known}") from k
 
     @staticmethod
-    def exists(maybe_config: Any) -> bool:
+    def _exists(maybe_config: Any) -> bool:
         """
-        Checks if a given configuration is a member of the Config enum.
+        Checks if a given configuration is a member of the ReadConfig enum.
 
         Args:
             maybe_config (any): The configuration to check, which can be an enum member or its value.
 
         Returns:
-            bool: True if maybe_config is a member of the Config enum or its value; False otherwise.
+            bool: True if maybe_config is a member of the ReadConfig enum or its value; False otherwise.
         """
         try:
-            return maybe_config in Config.__members__ or maybe_config.value in {config.value for config in Config}
+            return maybe_config in ReadConfig.__members__ or maybe_config.value in {
+                read_config.value for read_config in ReadConfig
+            }
         except Exception:
             return False
 
     @staticmethod
-    def not_exists(value: Any) -> bool:
+    def _not_exists(value: Any) -> bool:
         """
         Checks if a given configuration does not exist.
 
@@ -133,12 +135,12 @@ class Config(Enum):
             value (any): The configuration to check, which can be an enum member or its value.
 
         Returns:
-            bool: True if maybe_config is not a member of the Config enum or its value; False otherwise.
+            bool: True if maybe_config is not a member of the ReadConfig enum or its value; False otherwise.
         """
-        return not Config.exists(value)
+        return not ReadConfig._exists(value)
 
 
-STANDARD_COLUMNS = [
+_STANDARD_COLUMNS = [
     "Meta_Data",
     "Step_Count",
     "Voltage[V]",
@@ -152,73 +154,76 @@ STANDARD_COLUMNS = [
     "EIS_DC[A]",
 ]
 
-READER_CONFIGS: dict[Config, Callable[[str], DataFrame]] = {
+_READER_CONFIGS: dict[ReadConfig, Callable[[str], DataFrame]] = {
     # zahner readers
-    Config.Zahner_1: zahner_reader.to_dataframe,
-    Config.Zahner_2: zahner_reader.to_dataframe,
+    ReadConfig.Zahner_1: zahner_reader._to_dataframe,
+    ReadConfig.Zahner_2: zahner_reader._to_dataframe,
     # zahner New readers
-    Config.Zahner_new_1: zahner_new_reader.to_dataframe,
-    Config.Zahner_new_2: zahner_new_reader.to_dataframe,
-    Config.Zahner_new_3: zahner_new_reader.to_dataframe,
+    ReadConfig.Zahner_new_1: zahner_new_reader._to_dataframe,
+    ReadConfig.Zahner_new_2: zahner_new_reader._to_dataframe,
+    ReadConfig.Zahner_new_3: zahner_new_reader._to_dataframe,
     # Other readers
-    Config.Safion_1_9: safion_1_9_reader.to_dataframe,
-    Config.Parstat_2_63_3: parstat_2_63_3_reader.to_dataframe,
-    Config.Neware_8_0_0_516: neware_8_0_0_516_reader.to_dataframe,
-    Config.Digatron_4_20_6_236: digatron_4_20_6_236_reader.to_dataframe,
-    Config.Digatron_EIS_4_20_6_236: digatron_eis_4_20_6_236_reader.to_dataframe,
-    Config.BaSyTec_6_3_1_0: basytec_6_3_1_0_reader.to_dataframe,
-    Config.Arbin_8_00_PV221201: arbin_8_00_PV221201_reader.to_dataframe,
-    Config.Arbin_4_23_PV090331: arbin_4_23_PV090331_reader.to_dataframe,
+    ReadConfig.Safion_1_9: safion_1_9_reader._to_dataframe,
+    ReadConfig.Parstat_2_63_3: parstat_2_63_3_reader._to_dataframe,
+    ReadConfig.Neware_8_0_0_516: neware_8_0_0_516_reader._to_dataframe,
+    ReadConfig.Digatron_4_20_6_236: digatron_4_20_6_236_reader._to_dataframe,
+    ReadConfig.Digatron_EIS_4_20_6_236: digatron_eis_4_20_6_236_reader._to_dataframe,
+    ReadConfig.BaSyTec_6_3_1_0: basytec_6_3_1_0_reader._to_dataframe,
+    ReadConfig.Arbin_8_00_PV221201: arbin_8_00_PV221201_reader._to_dataframe,
+    ReadConfig.Arbin_4_23_PV090331: arbin_4_23_PV090331_reader._to_dataframe,
 }
 
-MAPPER_CONFIGS: dict[Config, tuple[dict[str, str], list[str]]] = {
+_MAPPER_CONFIGS: dict[ReadConfig, tuple[dict[str, str], list[str]]] = {
     # zahner mappers
-    Config.Zahner_1: (zahner_mapper.COLUMN_MAP_1, zahner_mapper.MISSING_REQUIRED_COLUMNS_1),
-    Config.Zahner_2: (zahner_mapper.COLUMN_MAP_2, zahner_mapper.MISSING_REQUIRED_COLUMNS_2),
+    ReadConfig.Zahner_1: (zahner_mapper._COLUMN_MAP_1, zahner_mapper._MISSING_REQUIRED_COLUMNS_1),
+    ReadConfig.Zahner_2: (zahner_mapper._COLUMN_MAP_2, zahner_mapper._MISSING_REQUIRED_COLUMNS_2),
     # zahner New mappers
-    Config.Zahner_new_1: (zahner_new_mapper.COLUMN_MAP_1, zahner_new_mapper.MISSING_REQUIRED_COLUMNS_1),
-    Config.Zahner_new_2: (zahner_new_mapper.COLUMN_MAP_2, zahner_new_mapper.MISSING_REQUIRED_COLUMNS_2),
-    Config.Zahner_new_3: (zahner_new_mapper.COLUMN_MAP_3, zahner_new_mapper.MISSING_REQUIRED_COLUMNS_3),
+    ReadConfig.Zahner_new_1: (zahner_new_mapper._COLUMN_MAP_1, zahner_new_mapper._MISSING_REQUIRED_COLUMNS_1),
+    ReadConfig.Zahner_new_2: (zahner_new_mapper._COLUMN_MAP_2, zahner_new_mapper._MISSING_REQUIRED_COLUMNS_2),
+    ReadConfig.Zahner_new_3: (zahner_new_mapper._COLUMN_MAP_3, zahner_new_mapper._MISSING_REQUIRED_COLUMNS_3),
     # Other mappers
-    Config.Safion_1_9: (safion_1_9_mapper.COLUMN_MAP, safion_1_9_mapper.MISSING_REQUIRED_COLUMNS),
-    Config.Parstat_2_63_3: (parstat_2_63_3_mapper.COLUMN_MAP, parstat_2_63_3_mapper.MISSING_REQUIRED_COLUMNS),
-    Config.Neware_8_0_0_516: (neware_8_0_0_516_mapper.COLUMN_MAP, neware_8_0_0_516_mapper.MISSING_REQUIRED_COLUMNS),
-    Config.Digatron_4_20_6_236: (
-        digatron_4_20_6_236_mapper.COLUMN_MAP,
-        digatron_4_20_6_236_mapper.MISSING_REQUIRED_COLUMNS,
+    ReadConfig.Safion_1_9: (safion_1_9_mapper._COLUMN_MAP, safion_1_9_mapper._MISSING_REQUIRED_COLUMNS),
+    ReadConfig.Parstat_2_63_3: (parstat_2_63_3_mapper._COLUMN_MAP, parstat_2_63_3_mapper._MISSING_REQUIRED_COLUMNS),
+    ReadConfig.Neware_8_0_0_516: (
+        neware_8_0_0_516_mapper._COLUMN_MAP,
+        neware_8_0_0_516_mapper._MISSING_REQUIRED_COLUMNS,
     ),
-    Config.Digatron_EIS_4_20_6_236: (
-        digatron_eis_4_20_6_236_mapper.COLUMN_MAP,
-        digatron_eis_4_20_6_236_mapper.MISSING_REQUIRED_COLUMNS,
+    ReadConfig.Digatron_4_20_6_236: (
+        digatron_4_20_6_236_mapper._COLUMN_MAP,
+        digatron_4_20_6_236_mapper._MISSING_REQUIRED_COLUMNS,
     ),
-    Config.BaSyTec_6_3_1_0: (basytec_6_3_1_0_mapper.COLUMN_MAP, basytec_6_3_1_0_mapper.MISSING_REQUIRED_COLUMNS),
-    Config.Arbin_8_00_PV221201: (
-        arbin_8_00_PV221201_mapper.COLUMN_MAP,
-        arbin_8_00_PV221201_mapper.MISSING_REQUIRED_COLUMNS,
+    ReadConfig.Digatron_EIS_4_20_6_236: (
+        digatron_eis_4_20_6_236_mapper._COLUMN_MAP,
+        digatron_eis_4_20_6_236_mapper._MISSING_REQUIRED_COLUMNS,
     ),
-    Config.Arbin_4_23_PV090331: (
-        arbin_4_23_PV090331_mapper.COLUMN_MAP,
-        arbin_4_23_PV090331_mapper.MISSING_REQUIRED_COLUMNS,
+    ReadConfig.BaSyTec_6_3_1_0: (basytec_6_3_1_0_mapper._COLUMN_MAP, basytec_6_3_1_0_mapper._MISSING_REQUIRED_COLUMNS),
+    ReadConfig.Arbin_8_00_PV221201: (
+        arbin_8_00_PV221201_mapper._COLUMN_MAP,
+        arbin_8_00_PV221201_mapper._MISSING_REQUIRED_COLUMNS,
+    ),
+    ReadConfig.Arbin_4_23_PV090331: (
+        arbin_4_23_PV090331_mapper._COLUMN_MAP,
+        arbin_4_23_PV090331_mapper._MISSING_REQUIRED_COLUMNS,
     ),
 }
 
-FORMATTER_CONFIGS: dict[Config, Callable[[DataFrame], DataFrame]] = {
+_FORMATTER_CONFIGS: dict[ReadConfig, Callable[[DataFrame], DataFrame]] = {
     # zahner formatters
-    Config.Zahner_1: zahner_formatter.get_data_into_format_zahner_1,
-    Config.Zahner_2: zahner_formatter.get_data_into_format_zahner_2,
+    ReadConfig.Zahner_1: zahner_formatter._get_data_into_format_zahner_1,
+    ReadConfig.Zahner_2: zahner_formatter._get_data_into_format_zahner_2,
     # zahner New formatters
-    Config.Zahner_new_1: zahner_new_formatter.get_data_into_format_zahner_1,
-    Config.Zahner_new_2: zahner_new_formatter.get_data_into_format_zahner_2,
-    Config.Zahner_new_3: zahner_new_formatter.get_data_into_format_zahner_3,
+    ReadConfig.Zahner_new_1: zahner_new_formatter._get_data_into_format_zahner_1,
+    ReadConfig.Zahner_new_2: zahner_new_formatter._get_data_into_format_zahner_2,
+    ReadConfig.Zahner_new_3: zahner_new_formatter._get_data_into_format_zahner_3,
     # Other formatters
-    Config.Safion_1_9: safion_1_9_formatter.get_data_into_format,
-    Config.Parstat_2_63_3: parstat_2_63_3_formatter.get_data_into_format,
-    Config.Neware_8_0_0_516: neware_8_0_0_516_formatter.get_data_into_format,
-    Config.Digatron_4_20_6_236: digatron_4_20_6_236_formatter.get_data_into_format,
-    Config.Digatron_EIS_4_20_6_236: digatron_eis_4_20_6_236_formatter.get_data_into_format,
-    Config.BaSyTec_6_3_1_0: basytec_6_3_1_0_formatter.get_data_into_format,
-    Config.Arbin_8_00_PV221201: arbin_8_00_PV221201_formatter.get_data_into_format,
-    Config.Arbin_4_23_PV090331: arbin_4_23_PV090331_formatter.get_data_into_format,
+    ReadConfig.Safion_1_9: safion_1_9_formatter._get_data_into_format,
+    ReadConfig.Parstat_2_63_3: parstat_2_63_3_formatter._get_data_into_format,
+    ReadConfig.Neware_8_0_0_516: neware_8_0_0_516_formatter._get_data_into_format,
+    ReadConfig.Digatron_4_20_6_236: digatron_4_20_6_236_formatter._get_data_into_format,
+    ReadConfig.Digatron_EIS_4_20_6_236: digatron_eis_4_20_6_236_formatter._get_data_into_format,
+    ReadConfig.BaSyTec_6_3_1_0: basytec_6_3_1_0_formatter._get_data_into_format,
+    ReadConfig.Arbin_8_00_PV221201: arbin_8_00_PV221201_formatter._get_data_into_format,
+    ReadConfig.Arbin_4_23_PV090331: arbin_4_23_PV090331_formatter._get_data_into_format,
 }
 
 

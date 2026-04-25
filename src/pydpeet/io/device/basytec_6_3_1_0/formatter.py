@@ -1,9 +1,9 @@
 import pandas as pd
 
-from pydpeet.io.utils.formatter_utils import round_testtime, testtime_hours_to_seconds_direct
+from pydpeet.io.utils.formatter_utils import _round_testtime, _testtime_hours_to_seconds_direct
 
 
-def get_data_into_format(df: pd.DataFrame) -> pd.DataFrame:
+def _get_data_into_format(df: pd.DataFrame) -> pd.DataFrame:
     """
     Takes a pandas DataFrame and applies two functions to it:
 
@@ -12,7 +12,7 @@ def get_data_into_format(df: pd.DataFrame) -> pd.DataFrame:
 
     Returns the modified DataFrame.
     """
-    df = testtime_hours_to_seconds_direct(df)
-    df = round_testtime(df)
+    df = _testtime_hours_to_seconds_direct(df)
+    df = _round_testtime(df)
 
     return df

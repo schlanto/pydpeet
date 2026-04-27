@@ -22,6 +22,7 @@ from pydpeet.process.analyze.extract.ocv import extract_ocv_iocv
 from pydpeet.process.analyze.resistance import add_resistance_internal
 from pydpeet.process.analyze.soc import SocMethod, add_soc
 from pydpeet.process.merge.series import merge_into_series
+from pydpeet.process.sequence.configs.config import DeviceConfig
 from pydpeet.process.sequence.step_analyzer import add_primitive_segments, extract_sequence_overview
 from pydpeet.process.sequence.utils.postprocessing.df_primitives_correction import df_primitives_correction
 from pydpeet.process.sequence.utils.postprocessing.filter_df import filter_and_split_df_by_blocks
@@ -32,6 +33,7 @@ from pydpeet.utils.logging_style import set_logging_style
 # Public API for this package
 __all__ = [
     "BatteryConfig",
+    "DeviceConfig",
     "ReadConfig",
     "SocMethod",
     "add_capacity",

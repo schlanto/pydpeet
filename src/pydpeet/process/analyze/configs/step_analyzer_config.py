@@ -10,7 +10,7 @@ THRESHOLD_DICT_Custom = [  # ARBIN_OLD
     3,  # FS_CURRENT
 ]
 # use THRESHOLD_DICT = THRESHOLD_DICT_Custom if you don't want to use a predefined dictionary
-THRESHOLD_DICT = config.NEWARE_CT_4008Q_5V12A_S1
+THRESHOLD_DICT = config.DeviceConfig.NEWARE_CT_4008Q_5V12A_S1
 MIN_DEFINITIVE_VOLTAGE_DIFFERENCE, MIN_DEFINITIVE_CURRENT_DIFFERENCE = calculate_minimum_definitive_differences(
     *THRESHOLD_DICT
 )

@@ -3,99 +3,8 @@ from typing import Optional
 
 import pandas as pd
 
+from pydpeet.process.sequence.configs.config import SequenceOverviewConfig
 from pydpeet.process.sequence.step_analyzer import extract_sequence_overview
-
-SEGMENTS_CONFIG_STANDARD: dict[str, dict] = {
-    "Pause": {
-        "rules": {
-            "type": "Rest",
-        }
-    },
-    "CC_Charge": {
-        "rules": {
-            "variable": "I",
-            "type": "Constant",
-            "direction": "Charge",
-        }
-    },
-    "CV_Charge": {
-        "rules": {
-            "variable": "V",
-            "type": "Constant",
-            "direction": "Charge",
-        }
-    },
-    "CP_Charge": {
-        "rules": {
-            "variable": "P",
-            "type": "Constant",
-            "direction": "Charge",
-        }
-    },
-    "CC_Discharge": {
-        "rules": {
-            "variable": "I",
-            "type": "Constant",
-            "direction": "Discharge",
-        }
-    },
-    "CV_Discharge": {
-        "rules": {
-            "variable": "V",
-            "type": "Constant",
-            "direction": "Discharge",
-        }
-    },
-    "CP_Discharge": {
-        "rules": {
-            "variable": "P",
-            "type": "Constant",
-            "direction": "Discharge",
-        }
-    },
-    "CRamp_Charge": {
-        "rules": {
-            "variable": "I",
-            "type": "Ramp",
-            "direction": "Up",
-        }
-    },
-    "VRamp_Charge": {
-        "rules": {
-            "variable": "V",
-            "type": "Ramp",
-            "direction": "Up",
-        }
-    },
-    "PRamp_Charge": {
-        "rules": {
-            "variable": "P",
-            "type": "Ramp",
-            "direction": "Up",
-        }
-    },
-    "CRamp_Discharge": {
-        "rules": {
-            "variable": "I",
-            "type": "Ramp",
-            "direction": "Down",
-        }
-    },
-    "VRamp_Discharge": {
-        "rules": {
-            "variable": "V",
-            "type": "Ramp",
-            "direction": "Down",
-        }
-    },
-    "PRamp_Discharge": {
-        "rules": {
-            "variable": "P",
-            "type": "Ramp",
-            "direction": "Down",
-        }
-    },
-}
 
 
 def _parse_segment_type(seg_type: str) -> tuple[str, str | None]:
@@ -210,7 +119,7 @@ def generate_instructions(
             "Pause": "time",
         }
     df_segments_and_sequences = extract_sequence_overview(
-        df_primitives, SEGMENT_SEQUENCE_CONFIG=SEGMENTS_CONFIG_STANDARD
+        df_primitives, config=SequenceOverviewConfig.GENERATE_INSTRUCTIONS
     )
     results = _get_important_entries_per_segment(df_primitives, df_segments_and_sequences)
     instructions = []

@@ -6,10 +6,10 @@ import pandas as pd
 from scipy import integrate
 
 from pydpeet.process.analyze.configs.battery_config import _BatteryConfigClass
-from pydpeet.process.analyze.configs.step_analyzer_config import SEGMENT_SEQUENCE_CONFIG
 from pydpeet.process.analyze.utils import (
     _StepTimer,
 )
+from pydpeet.process.sequence.configs.config import SequenceOverviewConfig
 from pydpeet.process.sequence.step_analyzer import extract_sequence_overview
 from pydpeet.process.sequence.utils.postprocessing.filter_df import filter_and_split_df_by_blocks
 from pydpeet.utils.guardrails import _guardrail_boolean, _guardrail_dataframe
@@ -100,7 +100,7 @@ def add_capacity(
     # Step 2: Segments and sequences
     with _StepTimer(verbose) as st:
         df_segments_and_sequences = extract_sequence_overview(
-            df_primitives, SEGMENT_SEQUENCE_CONFIG=SEGMENT_SEQUENCE_CONFIG
+            df_primitives, config=SequenceOverviewConfig.STEP_ANALYZER
         )
         st._log("computed segments and sequences")
 

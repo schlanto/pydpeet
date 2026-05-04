@@ -1,4 +1,5 @@
 import logging
+from dataclasses import replace
 
 import numpy as np
 import pandas as pd
@@ -14,8 +15,7 @@ def base_args():
     """Provides a fresh dictionary of default arguments for every test."""
     return {
         "df_primitives": Mocks.Mock_extract_sequence_overview.df_primitives.copy(),
-        "SEGMENT_SEQUENCE_CONFIG": Mocks.Mock_extract_sequence_overview.SEGMENT_SEQUENCE_CONFIG,
-        "SHOW_RUNTIME": Mocks.Mock_extract_sequence_overview.SHOW_RUNTIME,
+        "config": replace(Mocks.Mock_extract_sequence_overview.config),
     }
 
 
@@ -99,7 +99,7 @@ class Test_extract_sequence_overview_SEGMENT_SEQUENCE_CONFIG:
 
 class Test_extract_sequence_overview_SHOW_RUNTIME:
     def test_true(self, base_args):
-        base_args["SHOW_RUNTIME"] = True
+        base_args["config"].show_runtime = True
         result = extract_sequence_overview(**base_args)
         assert all(col in result.columns for col in Mocks.Mock_extract_sequence_overview.add_columns)
         # Compare with expected result
@@ -107,7 +107,7 @@ class Test_extract_sequence_overview_SHOW_RUNTIME:
         assert pd.DataFrame.equals(result, expected)
 
     def test_false(self, base_args):
-        base_args["SHOW_RUNTIME"] = False
+        base_args["config"].show_runtime = False
         result = extract_sequence_overview(**base_args)
         assert all(col in result.columns for col in Mocks.Mock_extract_sequence_overview.add_columns)
         # Compare with expected result
@@ -115,10 +115,10 @@ class Test_extract_sequence_overview_SHOW_RUNTIME:
         assert pd.DataFrame.equals(result, expected)
 
     def test_none(self, base_args):
-        base_args["SHOW_RUNTIME"] = None
+        base_args["config"].show_runtime = None
         _assert_raises_and_print(ValueError, extract_sequence_overview, **base_args)
 
     def test_wrong_type(self, base_args):
-        base_args["SHOW_RUNTIME"] = "wrong type"
-        assert not isinstance(base_args["SHOW_RUNTIME"], bool)
+        base_args["config"].show_runtime = "wrong type"
+        assert not isinstance(base_args["config"].show_runtime, bool)
         _assert_raises_and_print(ValueError, extract_sequence_overview, **base_args)

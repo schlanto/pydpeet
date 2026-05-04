@@ -6,13 +6,13 @@ import pandas as pd
 from matplotlib.colors import LinearSegmentedColormap
 
 from pydpeet.process.analyze.configs.battery_config import _BatteryConfigClass
-from pydpeet.process.analyze.configs.ocv_config import (
-    SEGMENT_SEQUENCE_CONFIG,
-    STEP_ANALYZER_PRIMITIVES_CONFIG,
-)
 from pydpeet.process.analyze.soc import (
     SocMethod,
     add_soc,
+)
+from pydpeet.process.sequence.configs.config import (
+    PrimitiveConfig,
+    SequenceOverviewConfig,
 )
 from pydpeet.process.sequence.step_analyzer import (
     add_primitive_segments,
@@ -93,7 +93,7 @@ def extract_ocv_iocv(
 
         df_primitives = add_primitive_segments(
             df=df,
-            STEP_ANALYZER_PRIMITIVES_CONFIG=STEP_ANALYZER_PRIMITIVES_CONFIG,
+            config=PrimitiveConfig.OCV_ANALYSIS_DEFAULT,
         )
     elif df_primitives is not None:
         _guardrail_dataframe(
@@ -120,7 +120,7 @@ def extract_ocv_iocv(
             config=config,
         )
 
-    df_segments_and_sequences = extract_sequence_overview(df_primitives, SEGMENT_SEQUENCE_CONFIG)
+    df_segments_and_sequences = extract_sequence_overview(df_primitives, config=SequenceOverviewConfig.OCV)
 
     # Applying Rules for iOCV Sequences
     _rules = ["Discharge_iOCV", "Charge_iOCV"]

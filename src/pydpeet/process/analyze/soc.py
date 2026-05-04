@@ -8,7 +8,7 @@ import pandas as pd
 from numba import njit
 
 from pydpeet.process.analyze.capacity import add_capacity
-from pydpeet.process.analyze.configs.battery_config import BatteryConfigClass
+from pydpeet.process.analyze.configs.battery_config import _BatteryConfigClass
 from pydpeet.process.analyze.utils import (
     _precompute_block_arrays_soc_methods,
     _StepTimer,
@@ -181,7 +181,7 @@ def add_soc(
     neware_bool: bool = True,
     standard_method: Optional[SocMethod] = None,
     methods: Optional[list[SocMethod]] = None,
-    config: BatteryConfigClass = None,
+    config: _BatteryConfigClass = None,
     lower_soc_for_voltage: float = 0,
     upper_soc_for_voltage: float = 1,
     lower_voltage_for_soc: float = 0,

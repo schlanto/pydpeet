@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 from matplotlib.colors import LinearSegmentedColormap
 
-from pydpeet.process.analyze.configs.battery_config import BatteryConfigClass
+from pydpeet.process.analyze.configs.battery_config import _BatteryConfigClass
 from pydpeet.process.analyze.configs.ocv_config import (
     SEGMENT_SEQUENCE_CONFIG,
     STEP_ANALYZER_PRIMITIVES_CONFIG,
@@ -28,7 +28,7 @@ def extract_ocv_iocv(
     visualize: bool = True,
     df_primitives: pd.DataFrame = None,
     df: pd.DataFrame = None,
-    config: BatteryConfigClass = None,
+    config: _BatteryConfigClass = None,
 ) -> pd.DataFrame:
     """
     Compute iOCV blocks from given DataFrames.

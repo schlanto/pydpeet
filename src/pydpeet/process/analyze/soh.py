@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 
 from pydpeet.process.analyze.capacity import add_capacity
-from pydpeet.process.analyze.configs.battery_config import BatteryConfigClass
+from pydpeet.process.analyze.configs.battery_config import _BatteryConfigClass
 from pydpeet.process.analyze.utils import _StepTimer
 
 
@@ -13,7 +13,7 @@ def add_soh(
     df: pd.DataFrame,
     neware_bool: bool = True,
     df_primitives: pd.DataFrame = None,
-    config: BatteryConfigClass = None,
+    config: _BatteryConfigClass = None,
     verbose: bool = True,
 ) -> pd.DataFrame:
     """

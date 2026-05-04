@@ -4,7 +4,7 @@ import logging
 import numpy as np
 import pandas as pd
 
-from pydpeet.process.analyze.configs.battery_config import BatteryConfigClass
+from pydpeet.process.analyze.configs.battery_config import _BatteryConfigClass
 from pydpeet.process.analyze.utils import (
     _StepTimer,
 )
@@ -13,7 +13,7 @@ from pydpeet.utils.guardrails import _guardrail_boolean, _guardrail_dataframe
 
 def add_resistance_internal(
     df: pd.DataFrame,
-    config: BatteryConfigClass = None,
+    config: _BatteryConfigClass = None,
     verbose: bool = True,
 ) -> pd.DataFrame:
     """

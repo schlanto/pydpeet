@@ -4,7 +4,7 @@ import logging
 import pandas as pd
 from scipy import integrate
 
-from pydpeet.process.analyze.configs.battery_config import BatteryConfigClass
+from pydpeet.process.analyze.configs.battery_config import _BatteryConfigClass
 from pydpeet.process.analyze.power import add_power
 from pydpeet.process.analyze.utils import (
     _check_columns,
@@ -14,7 +14,7 @@ from pydpeet.process.analyze.utils import (
 
 def add_cumulative_energy(
     df: pd.DataFrame,
-    config: BatteryConfigClass = None,
+    config: _BatteryConfigClass = None,
     verbose: bool = True,
 ) -> pd.DataFrame:
     """

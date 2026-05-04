@@ -12,7 +12,7 @@ from pydpeet.io.map import mapping
 from pydpeet.io.read import read
 from pydpeet.io.write import write
 from pydpeet.process.analyze.capacity import add_capacity
-from pydpeet.process.analyze.configs.battery_config import BatteryConfig, BatteryConfigClass
+from pydpeet.process.analyze.configs.battery_config import BatteryConfig, battery_config_wrapper
 from pydpeet.process.analyze.extract.ocv import extract_ocv_iocv
 from pydpeet.process.analyze.resistance import add_resistance_internal
 from pydpeet.process.analyze.soc import SocMethod, add_soc
@@ -27,8 +27,8 @@ from pydpeet.utils.logging_style import set_logging_style
 
 # Public API for this package
 __all__ = [
-    "BatteryConfigClass",
     "BatteryConfig",
+    "battery_config_wrapper",
     "DeviceConfig",
     "ReadConfig",
     "SocMethod",

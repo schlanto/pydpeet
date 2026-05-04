@@ -8,7 +8,7 @@ from pydpeet.process.analyze.average import (
     calculate_total_charge,
     calculate_total_discharge,
 )
-from pydpeet.process.analyze.configs.battery_config import BatteryConfigClass
+from pydpeet.process.analyze.configs.battery_config import _BatteryConfigClass
 from pydpeet.process.analyze.utils import _StepTimer
 
 
@@ -16,7 +16,7 @@ def add_efficiency_coulomb(
     df: pd.DataFrame,
     df_blocks_charge: pd.DataFrame,
     df_blocks_discharge: pd.DataFrame,
-    config: BatteryConfigClass = None,
+    config: _BatteryConfigClass = None,
     max_time_diff_in_secs: int = 300,
     ignore_threshold_values: bool = False,
     verbose: bool = True,

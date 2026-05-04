@@ -2,7 +2,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from pydpeet import BatteryConfig, BatteryConfigClass, SocMethod
+from pydpeet import BatteryConfig, SocMethod, battery_config_wrapper
 from pydpeet.process.sequence.utils.configs.CONFIG_Fallback import FALLBACK_CONFIG, SEGMENT_SEQUENCE_CONFIG
 
 # Get the directory where the current script is located
@@ -271,7 +271,7 @@ class Mocks:
         visualize = False
         df = DF_NEWARE.copy()
         df_primitives = DF_NEWARE_PRIMITIVES.copy()
-        config = BatteryConfigClass(c_ref=4.75, max_voltage=4.2, min_voltage=2.5, voltage_intervall=0.01)
+        config = battery_config_wrapper(c_ref=4.75, max_voltage=4.2, min_voltage=2.5, voltage_intervall=0.01)
         required_columns_df = ["Voltage[V]", "Current[A]", "Test_Time[s]"]
         required_columns_dtypes_df = [("Voltage[V]", float), ("Current[A]", float), ("Test_Time[s]", float)]
         required_columns_df_primitives = ["Test_Time[s]", "Type", "Duration", "ID", "Voltage[V]"]

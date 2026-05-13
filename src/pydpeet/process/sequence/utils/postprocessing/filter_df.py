@@ -5,12 +5,10 @@ from functools import reduce
 from typing import Any
 
 import pandas as pd
-from pandas import DataFrame
 
 from pydpeet.utils.guardrails import _guardrail_boolean, _guardrail_dataframe
 
 
-# TODO: Docstring
 def filter_df(
     df_segments_and_sequences: pd.DataFrame,
     df_primitives: pd.DataFrame,
@@ -18,6 +16,23 @@ def filter_df(
     standard_columns: list[str],
     combine_op: str = "xor",
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
+    """
+    Filter the segments and sequences DataFrames and create separate standard and non-standard DataFrames.
+
+    Args:
+        df_segments_and_sequences (pd.DataFrame): DataFrame containing segments and sequences data.
+        df_primitives (pd.DataFrame): DataFrame containing primitive data.
+        rules (list[str]): List of column names to filter on.
+        standard_columns (list[str]): List of column names to be included in the standard DataFrame.
+        combine_op (str): Combine operation ("and", "or", "xor", "not") to use for filtering. Default is "xor".
+
+    Returns:
+        tuple[pd.DataFrame, pd.DataFrame]: Filtered DataFrame and filtered IDs.
+
+    Raises:
+        ValueError: If combine_op is not one of the supported operations.
+        KeyError: If a rule column is not present in df_segments_and_sequences.
+    """
     # Map string to actual function
     comb_funcs: dict[str, Callable[..., Any]] = {
         "and": operator.and_,
@@ -61,12 +76,24 @@ def filter_df(
     return df_filtered, df_filtered_IDs
 
 
-# TODO: Docstring
 def return_or_print_blocks(
     df_filtered: pd.DataFrame,
     filtered_IDs: pd.Series | list | set | tuple,
     print_blocks: bool = True,
 ) -> None | list[dict]:
+    """
+    Split df_filtered into blocks based on unfiltered rows and return a list of blocks.
+    Each block includes all rows from start_id to end_id (inclusive), even if IDs repeat.
+
+    Args:
+        df_filtered (pd.DataFrame): DataFrame containing ID and Test_Time[s] columns.
+        filtered_IDs (pd.Series | list | set | tuple): IDs to filter on.
+        print_blocks (bool, optional): Whether to print the blocks. Defaults to True.
+
+    Returns:
+        None | list[dict]: List of blocks, each containing start_id, end_id, start_time, and end_time.
+        If print_blocks is True, returns None.
+    """
     import numpy as np
 
     # Ensure IDs are in a fast lookup structure
@@ -122,7 +149,17 @@ def split_df_by_blocks(
 ) -> list[pd.DataFrame]:
     """
     Split df_filtered into multiple DataFrames per block.
+
     Each block includes all rows from start_id to end_id (inclusive), even if IDs repeat.
+
+    Args:
+        df_filtered (pd.DataFrame): DataFrame to split.
+        blocks (list[dict]): List of dictionaries where each dictionary contains the keys:
+            - start_id (int): ID of the start of the block.
+            - end_id (int): ID of the end of the block.
+
+    Returns:
+        list[pd.DataFrame]: List of DataFrames per block.
     """
     dfs_per_block = []
     ids = df_filtered["ID"].values
@@ -154,7 +191,23 @@ def filter_and_split_df_by_blocks(
     combine_op: str = "or",
     print_blocks: bool = False,
     also_return_filtered_df: bool = True,
-) -> tuple[list[DataFrame], DataFrame] | list[DataFrame]:
+) -> tuple[list[pd.DataFrame], pd.DataFrame] | list[pd.DataFrame]:
+    """
+    Filter and split df_segments_and_sequences based on rules and split into multiple DataFrames per block.
+
+    Args:
+        df_segments_and_sequences (pd.DataFrame): DataFrame containing ID and rules columns.
+        df_primitives (pd.DataFrame): DataFrame containing ID, Test_Time[s], Voltage[V], Current[A], Power[W],
+                                      ID, Variable columns.
+        rules (list[str]): List of column names to filter on.
+        combine_op (str): Combine operation ("and", "or", "xor", "not") to use for filtering. Default is "or".
+        print_blocks (bool): Whether to print the blocks. Default is False.
+        also_return_filtered_df (bool): Whether to return the filtered DataFrame. Default is True.
+
+    Returns:
+        tuple[list[pd.DataFrame], pd.DataFrame] | list[pd.DataFrame]: List of DataFrames per block and filtered DataFrame.
+                                                                        If also_return_filtered_df is False, only the list of DataFrames per block is returned.
+    """
     # Required columns and dtypes for validation
     required_columns_df_segments = ["ID"] + rules if rules else ["ID"]
     required_columns_dtypes_df_segments = [("ID", int)]

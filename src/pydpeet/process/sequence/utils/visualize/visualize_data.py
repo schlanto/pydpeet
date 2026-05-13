@@ -202,7 +202,6 @@ def _visualize_phases(
         plt.tight_layout()
 
 
-# TODO: Docstring
 def visualize_phases(
     dataframe: pd.DataFrame,
     config: _VisualizationConfigClass,

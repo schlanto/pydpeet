@@ -5,6 +5,27 @@ from pydpeet.process.sequence.utils.preprocessing.calculate_thresholds import ca
 
 
 class DeviceConfig:
+    """
+    Device configurations used for segment detection and primitive annotation.
+
+    Attributes:
+        BASYTEC_CTS (list[float])
+            0.002,  # ACCURACY_VOLTAGE_SIGNAL
+            0.003,  # ACCURACY_CURRENT_SIGNAL
+            0.002,  # ACCURACY_VOLTAGE_MEASUREMENT
+            0.003,  # ACCURACY_CURRENT_MEASUREMENT
+            6,  # FS_VOLTAGE
+            5,  # FS_CURRENT
+
+        NEWARE_CT_4008Q_5V12A_S1 (list[float])
+            0.0005,  # ACCURACY_VOLTAGE_SIGNAL
+            0.0005,  # ACCURACY_CURRENT_SIGNAL
+            0.0005,  # ACCURACY_VOLTAGE_MEASUREMENT
+            0.0005,  # ACCURACY_CURRENT_MEASUREMENT
+            5,  # FS_VOLTAGE
+            3,  # FS_CURRENT
+    """
+
     BASYTEC_CTS = [  # BaSyTec
         0.002,  # ACCURACY_VOLTAGE_SIGNAL
         0.003,  # ACCURACY_CURRENT_SIGNAL

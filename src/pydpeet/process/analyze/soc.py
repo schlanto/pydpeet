@@ -17,6 +17,17 @@ from pydpeet.utils.guardrails import _guardrail_boolean, _guardrail_dataframe
 
 
 class SocMethod(Enum):
+    """
+    Enum representing different methods for computing State of Charge (SOC).
+
+    Attributes
+    ----------
+    WITHOUT_RESET : str
+    WITH_RESET_WHEN_FULL : str
+    WITH_RESET_WHEN_EMPTY : str
+    WITH_RESET_WHEN_FULL_AND_EMPTY : str
+    """
+
     WITHOUT_RESET = "withoutReset"
     WITH_RESET_WHEN_FULL = "withResetWhenFull"
     WITH_RESET_WHEN_EMPTY = "withResetWhenEmpty"

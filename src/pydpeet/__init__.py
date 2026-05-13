@@ -60,28 +60,32 @@ __all__ = [
     "print_references",
     "write_to_bibtex",
     # Tutorial 02
-    "DeviceConfig",
+    "add_primitive_segments",
     "PrimitiveConfig",
     "primitive_config_wrapper",
-    "add_primitive_segments",
+    "DeviceConfig",
     "calculate_minimum_definitive_differences",
+    "visualize_phases",
     "VisualizationConfig",
     "visualization_config_wrapper",
-    "visualize_phases",
+    "df_primitives_correction",  # TODO Tut 2
     # Tutorial 03
+    "extract_sequence_overview",
     "SequenceOverviewConfig",
     "sequence_overview_config_wrapper",
-    "df_primitives_correction",
-    "extract_sequence_overview",
+    "generate_instructions",
     # Tutorial 04
-    "BatteryConfig",
-    "battery_config_wrapper",
-    # Tutorial 05
+    "filter_and_split_df_by_blocks",  # TODO why 3 variants?
+    "split_df_by_blocks",  # TODO why 3 variants?
+    "filter_df",  # TODO why 3 variants?
+    "return_or_print_blocks",
     "extract_ocv_iocv",
     "compute_ocv_dva_ica",
-    # Tutorial 06
+    # Tutorial 05
     "SocMethod",
     "add_capacity",
+    "BatteryConfig",
+    "battery_config_wrapper",
     "add_charge_throughput",
     "add_cumulative_energy",
     "add_efficiency_coulomb",
@@ -90,14 +94,8 @@ __all__ = [
     "add_resistance_internal",
     "add_soc",
     "add_soh",
-    # Tutorial 07
-    "filter_and_split_df_by_blocks",
-    "filter_df",
-    "generate_instructions",
-    "return_or_print_blocks",
-    "split_df_by_blocks",
-    # TODO was ist das / wofür braucht man das?
+    # TODO what / why is this?
     "merge_into_campaign",
-
-    # TODO diskutieren ob wir es überhaupt brauchen, da read
-    "convert",]
+    # TODO discuss if still needed, due to read()
+    "convert",
+]

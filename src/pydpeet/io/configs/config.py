@@ -66,6 +66,10 @@ import pydpeet.io.device.zahner_new.reader as zahner_new_reader
 
 
 class ReadConfig(Enum):
+    """
+    Links device specific reader, formatter and mapper via enums.
+    """
+
     Zahner_1 = auto()
     Zahner_2 = auto()
     Zahner_new_1 = auto()
@@ -228,6 +232,15 @@ _FORMATTER_CONFIGS: dict[ReadConfig, Callable[[DataFrame], DataFrame]] = {
 
 
 class DataOutputFiletype(Enum):
+    """
+    Enum representing the file types that can be used for output data.
+
+    Attributes:
+        parquet (DataOutputFiletype): Parquet file format.
+        csv (DataOutputFiletype): CSV (Comma Separated Values) file format.
+        xlsx (DataOutputFiletype): Excel (XLSX) file format.
+    """
+
     parquet = auto()
     csv = auto()
     xlsx = auto()

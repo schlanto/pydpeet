@@ -332,7 +332,7 @@ def _load_reference_db():
 def from_id(ref_id):
     """
     Usage:
-        @citeme.from_id("Daniel_BA")
+        @citeme.from_id("Example")
         def foo():
             ...
     """
@@ -372,10 +372,35 @@ def set_check_fields(value):
 
 
 def print_references():
+    """
+    Print references of all functions that used the @citeme.from_id(...) decorator.
+
+    Example:
+        @citeme.from_id("Example")
+        def foo():
+            ...
+        foo()
+        print_references()
+
+        Output:
+
+            @article{Daniel_BA,
+              title = {Example},
+              author = {Example, Example},
+              year = {2026},
+              ...
+            }
+    """
     CiteMe().print_references()
 
 
 def write_to_bibtex(filename):
+    """
+    Write the bibliography of all used references (functions with @citeme.from_id(...) decorator) to a BibTeX file.
+
+    Args:
+        filename (str): The path to the file where the bibliography will be written.
+    """
     CiteMe().write_to_bibtex(filename)
 
 

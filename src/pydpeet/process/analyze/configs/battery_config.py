@@ -43,7 +43,7 @@ class _BatteryConfigClass:
 
 def battery_config_wrapper(
     cell_name: str = "Default",
-    c_ref: Optional[float] = None,
+    c_ref: Optional[float] = 4.8,
     soc_start: float = 0,
     max_voltage: float = 4.2,
     min_voltage: float = 2.5,

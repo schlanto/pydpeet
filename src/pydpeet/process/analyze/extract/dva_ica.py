@@ -158,7 +158,7 @@ def extract_ocv_dva_ica(
     logging.info("Computing DVA and ICA for every block...")
     all_dva_ica_curves = []
     for _, block in enumerate(dfs_per_block):
-        df_dva_ica = df_primitives.loc[df_primitives["Test_Time[s]"].isin(block["Test_Time[s]"])]
+        df_dva_ica = df_primitives.loc[df_primitives["Test_Time[s]"].isin(block["Test_Time[s]"])].copy()
 
         voltage = df_dva_ica["Voltage[V]"].to_numpy()
         capacity = df_dva_ica["Capacity_Ah"].to_numpy()
@@ -172,11 +172,14 @@ def extract_ocv_dva_ica(
 
         if savgol:
             logging.info("Applying Savitzky-Golay filter...")
-            window_length = int(len(df_dva_ica["dQ_dV"]) * savgol_window_lenght_percentage)
+            # clean_mask to handle prepended NaN value
+            clean_mask = df_dva_ica["dQ_dV"].notna()
+            clean_vals = df_dva_ica.loc[clean_mask, "dQ_dV"]
+            window_length = int(len(clean_vals) * savgol_window_lenght_percentage)
             if window_length % 2 == 0:
                 window_length += 1
             window_length = max(window_length, 5)
-            df_dva_ica["dQ_dV"] = savgol_filter(df_dva_ica["dQ_dV"], window_length, 2)
+            df_dva_ica.loc[clean_mask, "dQ_dV"] = savgol_filter(clean_vals, window_length, 2)
 
         df_dva_ica["DVA_ICA_type"] = block["DVA_ICA_type"].iloc[0]
         all_dva_ica_curves.append(df_dva_ica)

@@ -74,7 +74,7 @@ def add_resistance_internal(
 
     # Only calculate resistance when:
     mask = (
-        (delta_t > 0)  # Time is increasing
+        (delta_t >= 0)  # Time is increasing
         & ((delta_t <= max_time_diff) | (delta_t == 0))  # Within max time window
         & (abs(delta_current) >= min_current_diff)  # Significant current change
         & (abs(delta_voltage) >= min_voltage_diff)  # Significant voltage change

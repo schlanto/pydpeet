@@ -51,7 +51,7 @@ def battery_config_wrapper(
     voltage_intervall: float = 0.01,
     minimal_current_for_capacity: float = -1.2,
     maximal_current_for_capacity: float = -0.8,
-    min_current_diff: float = 1,
+    min_current_diff: float = 0.5,
     max_time_diff: float = 0.5,
     min_voltage_diff: float = 0,
     ignore_negative_resistance_values: bool = False,

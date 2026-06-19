@@ -178,7 +178,7 @@ def _convert_to_float_if_possible(x) -> float | Any:
 
 def _replace_empty_with_none_in_standard_columns(df: pd.DataFrame) -> pd.DataFrame:
     """
-    Replace empty strings with None in the columns specified in _STANDARD_COLUMNS.
+    Replace empty strings with None in the columns specified in pydpeet.io.configs.config._STANDARD_COLUMNS.
 
     Parameters
     ----------

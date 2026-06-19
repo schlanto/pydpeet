@@ -590,7 +590,7 @@ def _get_data_into_format(
     else:
         logging.info(f"Using formatter for ReadConfig: {config}")
         try:
-            _FORMATTER_CONFIGS[config](df)  # type: ignore[index]
+            _FORMATTER_CONFIGS[config](df)
         except Exception as e:
             raise ValueError(f"Error applying formatter: {e}") from e
 

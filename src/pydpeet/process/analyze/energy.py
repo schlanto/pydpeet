@@ -1,6 +1,7 @@
 import inspect
 import logging
 
+import numpy as np
 import pandas as pd
 from scipy import integrate
 
@@ -18,7 +19,7 @@ def add_cumulative_energy(
     verbose: bool = True,
 ) -> pd.DataFrame:
     """
-    Calculates cumulative energy [Wh] from 'Test_Time[s]' and 'Power[W]' columns and adds it as a new column.
+    Calculates cumulative energy [Wh] and absolute cumulative energy [Wh] from 'Test_Time[s]' and 'Power[W]' columns.
 
     Parameters:
     - df (pandas.DataFrame): DataFrame containing 'Test_Time[s]' and 'Power[W]' columns
@@ -26,7 +27,11 @@ def add_cumulative_energy(
     - config (BatteryConfig): Config object containing max and min voltage values
 
     Returns:
-    - pandas.DataFrame: DataFrame with added 'CumulativeEnergy[Wh]' column
+    - pandas.DataFrame: DataFrame with added 'CumulativeEnergy[Wh]' and 'AbsoluteCumulativeEnergy[Wh]' columns
+
+    Notes:
+    The 'CumulativeEnergy[Wh]' column represents the cumulative energy (in Wh) with sign (i.e., charge + / discharge -)
+    The 'AbsoluteCumulativeEnergy[Wh]' column represents the cumulative absolute energy (in Wh)
     """
     logging.info("Calculating CumulativeEnergy[Wh]...")
 
@@ -45,9 +50,14 @@ def add_cumulative_energy(
 
     with _StepTimer(verbose) as st:
         _check_columns(df_mod, ["Test_Time[s]", "Power[W]"])
-        df_mod["CumulativeEnergy[Wh]"] = (
-            integrate.cumulative_trapezoid(df_mod["Power[W]"], x=df_mod["Test_Time[s]"], initial=0) / 3600
-        )
-        st._log("calculated CumulativeEnergy[Wh]")
+        power_values = df_mod["Power[W]"].to_numpy(dtype=float)
+        time_values = df_mod["Test_Time[s]"].to_numpy(dtype=float)
+
+        energy = integrate.cumulative_trapezoid(power_values, x=time_values, initial=0) / 3600
+        abs_energy = integrate.cumulative_trapezoid(np.abs(power_values), x=time_values, initial=0) / 3600
+
+        df_mod["CumulativeEnergy[Wh]"] = energy
+        df_mod["AbsoluteCumulativeEnergy[Wh]"] = abs_energy
+        st._log("calculated CumulativeEnergy[Wh] and AbsoluteCumulativeEnergy[Wh]")
 
     return df_mod

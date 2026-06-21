@@ -21,11 +21,11 @@ jobs:
         with:
           python-version: "3.13"
       - name: uv
-        uses: astral-sh/setup-uv@v8
+        uses: astral-sh/setup-uv@v7
         with:
           enable-cache: true
       - name: pre-commit
-        run: pip install uv pre-commit
+        run: uv add pre-commit
       - name: ruff_linter
         run: pre-commit run ruff --all-files --show-diff-on-failure
       - name: ruff_formatter
@@ -45,11 +45,11 @@ jobs:
         with:
           python-version: "3.13"
       - name: uv
-        uses: astral-sh/setup-uv@v8
+        uses: astral-sh/setup-uv@v7
         with:
           enable-cache: true
       - name: pre-commit
-        run: pip install uv pre-commit
+        run: uv add pre-commit
       - name: mypy
         run: pre-commit run mypy --all-files --show-diff-on-failure
 
@@ -67,7 +67,7 @@ jobs:
         with:
           python-version: "3.13"
       - name: uv
-        uses: astral-sh/setup-uv@v8
+        uses: astral-sh/setup-uv@v7
         with:
           enable-cache: true
       - name: tk

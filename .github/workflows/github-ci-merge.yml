@@ -27,11 +27,9 @@ jobs:
         with:
           python-version: "3.13"
       - name: uv
-        uses: astral-sh/setup-uv@v8
+        uses: astral-sh/setup-uv@v7
         with:
           enable-cache: true
-      - name: pre-commit
-        run: pip install uv pre-commit
       - name: pandoc
         run: |
           sudo apt-get update

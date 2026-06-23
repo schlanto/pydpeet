@@ -1,0 +1,98 @@
+name: CI_Commit
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+env:
+  PRE_COMMIT_HOME: .cache/pre-commit
+
+jobs:
+  #------------#
+  #--- LINT ---#
+  #------------#
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: init
+        uses: actions/checkout@v6
+      - name: python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+      - name: uv
+        uses: astral-sh/setup-uv@v7
+        with:
+          enable-cache: true
+      - name: pre-commit
+        run: uv add pre-commit
+      - name: ruff_linter
+        run: uv run pre-commit run ruff --all-files --show-diff-on-failure
+      - name: ruff_formatter
+        run: uv run pre-commit run ruff-format --all-files --show-diff-on-failure
+
+  #------------#
+  #--- MYPY ---#
+  #------------#
+  mypy:
+    runs-on: ubuntu-latest
+    needs: lint
+    steps:
+      - name: init
+        uses: actions/checkout@v6
+      - name: python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+      - name: uv
+        uses: astral-sh/setup-uv@v7
+        with:
+          enable-cache: true
+      - name: pre-commit
+        run: uv add pre-commit
+      - name: mypy
+        run: uv run pre-commit run mypy --all-files --show-diff-on-failure
+
+  #------------#
+  #--- TEST ---#
+  #------------#
+  test:
+    runs-on: ubuntu-latest
+    needs: mypy
+    steps:
+      - name: init
+        uses: actions/checkout@v6
+      - name: python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+      - name: uv
+        uses: astral-sh/setup-uv@v7
+        with:
+          enable-cache: true
+      - name: tk
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y python3-tk
+      - name: uv_sync
+        run: uv sync --frozen --group test
+      - name: run_tests
+        run: |
+          uv run pytest -v test/api_accessible \
+            --junitxml=report.xml \
+            -n 10 \
+            --cov=src/pydpeet \
+            --cov-report=term \
+            --cov-report=html:coverage_html \
+            --cov-report=xml:coverage.xml \
+            --reruns 5 \
+            --only-rerun numpy._core._exceptions._ArrayMemoryError
+      - name: test_artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-reports
+          path: |
+            report.xml
+            coverage.xml
+            coverage_html/
+          retention-days: 14

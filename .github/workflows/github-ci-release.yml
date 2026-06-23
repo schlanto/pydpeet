@@ -1,0 +1,59 @@
+# name: CI_Release
+# on:
+#   push:
+#     branches:
+#       - main
+
+# jobs:
+#   #---------------#
+#   #--- RELEASE ---#
+#   #---------------#
+#   release:
+#     runs-on: ubuntu-latest
+#     environment:
+#       name: release-pypi
+#     steps:
+#       - name: init
+#         uses: actions/checkout@v6
+#       - name: python
+#         uses: actions/setup-python@v6
+#         with:
+#           python-version: "3.13"
+#       - name: uv
+#         uses: astral-sh/setup-uv@v7
+#         with:
+#           enable-cache: true
+#       - name: uv_sync
+#         run: uv sync --frozen --group test
+#       - name: release_artifact
+#         uses: actions/upload-artifact@v4
+#         with:
+#           name: release-artifact
+#           path: dist/
+#           retention-days: 14
+on:
+  release:
+    types: [published]
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    environment:
+      name: release-pypi
+    steps:
+      - name: init
+        uses: actions/checkout@v6
+      - name: uv
+        uses: astral-sh/setup-uv@v7
+        with:
+          enable-cache: true
+      - name: uv_sync
+        run: uv sync --frozen --group test
+      - name: build
+        run: uv build
+      - name: pypi_publish
+        uses: pypa/gh-action-pypi-publish@release/v1

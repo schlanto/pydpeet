@@ -79,6 +79,7 @@ jobs:
       - name: run_tests
         run: |
           uv run pytest -v test/api_accessible \
+            -n auto \
             --junitxml=report.xml \
             --cov=src/pydpeet \
             --cov-report=term \

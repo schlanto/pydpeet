@@ -1,3 +1,13 @@
+[![PyPI](https://img.shields.io/pypi/v/pydpeet)](https://pypi.org/project/pydpeet/)
+[![Python](https://img.shields.io/pypi/pyversions/pydpeet)](https://pypi.org/project/pydpeet/)
+<!-- [![CI](https://github.com/eet-tub/pydpeet/actions/workflows/github-ci.yml/badge.svg)](https://github.com/eet-tub/pydpeet/actions/workflows/github-ci.yml) -->
+[![Docs](https://img.shields.io/badge/docs-latest-blue)](https://eet-tub.github.io/pydpeet/)
+[![License](https://img.shields.io/github/license/eet-tub/pydpeet)](LICENSE)
+<!-- [![DOI](https://zenodo.org/badge/DOI/<DOI>.svg)](https://doi.org/<DOI>) -->
+<!-- [![Coverage](https://codecov.io/gh/eet-tub/pydpeet/branch/main/graph/badge.svg)](https://codecov.io/gh/eet-tub/pydpeet) -->
+<!-- [![Downloads](https://img.shields.io/pypi/dm/pydpeet)](https://pypi.org/project/pydpeet/) -->
+<!-- [![Status](https://joss.theoj.org/papers/<paper-id>/status.svg)](...) -->
+
 # PyDPEET - Fast and Easy Battery Data Unification, Processing, and Analysis
 
 ## Contact

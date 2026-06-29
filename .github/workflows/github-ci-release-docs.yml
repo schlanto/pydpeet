@@ -1,9 +1,7 @@
 name: CI_Release_Docs
-
 on:
   release:
     types: [published]
-
   workflow_dispatch:
     inputs:
       tag:
@@ -13,10 +11,12 @@ on:
 
 permissions:
   contents: write
+  pages: write
+  id-token: write
 
 concurrency:
   group: github-pages
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   #-------------#
@@ -26,54 +26,41 @@ jobs:
     runs-on: ubuntu-latest
     env:
       PYDPEET_DOC_VERSION: ${{ inputs.tag || github.event.release.tag_name }}
-
     steps:
       - name: init
         uses: actions/checkout@v6
-        with:
-          ref: ${{ inputs.tag || github.event.release.tag_name }}
-          fetch-depth: 0
-
       - name: python
         uses: actions/setup-python@v6
         with:
           python-version: "3.13"
-
       - name: uv
         uses: astral-sh/setup-uv@v7
         with:
           enable-cache: true
-
       - name: pandoc
         run: |
           sudo apt-get update
           sudo apt-get install -y pandoc
-
       - name: tk
         run: |
+          sudo apt-get update
           sudo apt-get install -y python3-tk
-
       - name: uv_sync
         run: uv sync --frozen --group docs
-
       - name: docs
         run: uv run docs/build_docs.py
-
       - name: prepare_pages
         run: |
-          VERSION="${{ inputs.tag || github.event.release.tag_name }}"
-
-          mkdir -p public/$VERSION
-          cp -r docs/_build/html/* public/$VERSION/
+          mkdir -p docs/_public/$PYDPEET_DOC_VERSION
+          cp -r docs/_build/html/* docs/_public/$PYDPEET_DOC_VERSION/
 
           if [ "${{ github.event_name }}" = "release" ]; then
-              mkdir -p public/stable
-              cp -r docs/_build/html/* public/stable/
+              mkdir -p docs/_public/stable
+              cp -r docs/_build/html/* docs/_public/stable/
           fi
-
       - name: create_switcher
         run: |
-          mkdir -p public/_static
+          mkdir -p docs/_public/_static
 
           python - <<'PY'
           import json
@@ -110,16 +97,52 @@ jobs:
                   }
               )
 
-          Path("public/_static/switcher.json").write_text(
+          Path("docs/_public/_static/switcher.json").write_text(
               json.dumps(switcher, indent=2) + "\n",
               encoding="utf-8",
           )
           PY
-
-      - name: pages_deploy
-        uses: peaceiris/actions-gh-pages@v4
+      - name: pages_configure
+        uses: actions/configure-pages@v5
+      - name: pages_artifact_version
+        uses: actions/upload-pages-artifact@v5
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_branch: gh-pages
-          publish_dir: public
-          keep_files: true
+          name: docs-version
+          path: docs/_public/$PYDPEET_DOC_VERSION/
+          retention-days: 14
+      - name: pages_artifact_stable
+        uses: actions/upload-pages-artifact@v5
+        with:
+          name: docs-stable
+          path: docs/_public/stable/
+          retention-days: 14
+  #----------------------#
+  #--- DEPLOY VERSION ---#
+  #----------------------#
+  deploy_version:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment_version.outputs.page_url }}
+    steps:
+      - name: pages_deploy_version
+        id: deployment_version
+        uses: actions/deploy-pages@v4
+        with:
+          artifact_name: docs-version
+  #---------------------#
+  #--- DEPLOY STABLE ---#
+  #---------------------#
+  deploy_stable:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment_stable.outputs.page_url }}
+    steps:
+      - name: pages_deploy_stable
+        id: deployment_stable
+        uses: actions/deploy-pages@v4
+        with:
+          artifact_name: docs-stable

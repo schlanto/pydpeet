@@ -123,7 +123,6 @@ html_theme_options = {
             "icon": "fa-brands fa-github",
         },
     ],
-    
     "switcher": {
         "json_url": "https://schlanto.github.io/pydpeet/_static/switcher.json",
     },

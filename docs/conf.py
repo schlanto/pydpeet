@@ -3,6 +3,9 @@ from __future__ import annotations
 import sys
 from pathlib import Path
 
+import os
+
+
 # --- Paths -----------------------------------------------------------------
 DOCS_DIR = Path(__file__).resolve().parent
 REPO_ROOT = DOCS_DIR.parent
@@ -125,6 +128,8 @@ html_theme_options = {
     ],
     "switcher": {
         "json_url": "https://schlanto.github.io/pydpeet/_static/switcher.json",
+        "version_match": os.environ.get("PYDPEET_DOC_VERSION", "latest")
+,
     },
 }
 

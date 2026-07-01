@@ -120,12 +120,14 @@ jobs:
           path: docs/_public/
           retention-days: 14
 
-  #------------#
+  #--------------#
   #--- DEPLOY ---#
-  #------------#
+  #--------------#
   deploy:
     needs: build
     runs-on: ubuntu-latest
+    env:
+      VERSION: ${{ inputs.tag || github.event.release.tag_name }}
     steps:
       - name: checkout_gh_pages
         uses: actions/checkout@v6
@@ -141,4 +143,33 @@ jobs:
 
       - name: update_version
         run: |
-          rm -rf gh-pages/${{ needs.build.outputs.version || env.VERSION }}
+          rm -rf gh-pages/$VERSION
+          mkdir -p gh-pages/$VERSION
+          cp -r docs-version/$VERSION/* gh-pages/$VERSION/
+
+          if [ "${{ github.event_name }}" = "release" ]; then
+              rm -rf gh-pages/stable
+              mkdir -p gh-pages/stable
+              cp -r docs-version/stable/* gh-pages/stable/
+          fi
+
+          mkdir -p gh-pages/_static
+          cp docs-version/_static/switcher.json gh-pages/_static/switcher.json
+
+          touch gh-pages/.nojekyll
+
+      - name: commit_and_push
+        run: |
+          cd gh-pages
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git add . 
+
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+          else
+            git commit -m "Update documentation for $VERSION"
+            git push origin gh-pages
+          fi

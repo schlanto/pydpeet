@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 import sys
 from pathlib import Path
 
@@ -125,6 +126,7 @@ html_theme_options = {
     ],
     "switcher": {
         "json_url": "https://schlanto.github.io/pydpeet/_static/switcher.json",
+        "version_match": os.environ.get("PYDPEET_DOC_VERSION", "latest"),
     },
 }
 

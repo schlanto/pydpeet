@@ -17,10 +17,10 @@ Bugfixes:
 
 Tasks:
 - Migrated from GitLab (TU Berlin) to GitHub
-- Filled in 'AUTHORS.md', 'CHANGELOG.md', and 'CONTRIBUTING.md' [#6]
-- Set up GitHub workflows after migrating from GitLab (TU Berlin) [#7, #9, #10, #11]
-- Added badges to 'README.md' [#13]
-- Added version switch to GitHub Pages website [#14]
+- Filled in 'AUTHORS.md', 'CHANGELOG.md', and 'CONTRIBUTING.md' [[#6](https://github.com/eet-tub/pydpeet/issues/6)]
+- Set up GitHub workflows after migrating from GitLab (TU Berlin) [[#7](https://github.com/eet-tub/pydpeet/issues/7), [#9](https://github.com/eet-tub/pydpeet/issues/9), [#10](https://github.com/eet-tub/pydpeet/issues/10), [#11](https://github.com/eet-tub/pydpeet/issues/11)]
+- Added badges to 'README.md' [[#13](https://github.com/eet-tub/pydpeet/issues/13)]
+- Added version switch to GitHub Pages website [[#14](https://github.com/eet-tub/pydpeet/issues/14)]
 - Added new iteration of example notebooks
 - Added support for new 'pandas' main version and bumped dependency to version 3.0.3
 - Added recent PyDPEET-related publications

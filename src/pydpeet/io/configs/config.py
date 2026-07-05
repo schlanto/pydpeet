@@ -70,10 +70,10 @@ class _FiletypeIterable(type):
     """Metaclass that makes a filetype group iterable over its ALL set."""
 
     def __iter__(cls):
-        return iter(cls.ALL)
+        return iter(cls._ALL)
 
     def __len__(cls):
-        return len(cls.ALL)
+        return len(cls._ALL)
 
 
 class ReadConfig(Enum):
@@ -175,26 +175,26 @@ _EXTENSION_GROUPS: dict[str, Iterable[ReadConfig]] = {
     ".txt": ReadConfig.Text,
 }
 
-# TODO order changes Priority
-ReadConfig.Excel.ALL = frozenset({
+# order changes Priority, we choose Alphabetical order
+ReadConfig.Excel._ALL = (
     ReadConfig.Arbin_4_23_PV090331,
     ReadConfig.Arbin_8_00_PV221201,
     ReadConfig.Neware_8_0_0_516,
-})
-ReadConfig.Csv.ALL = frozenset({
+)
+ReadConfig.Csv._ALL = (
     ReadConfig.Digatron_4_20_6_236,
     ReadConfig.Digatron_EIS_4_20_6_236,
-})
-ReadConfig.Text.ALL = frozenset({
+)
+ReadConfig.Text._ALL = (
+    ReadConfig.BaSyTec_6_3_1_0,
+    ReadConfig.Parstat_2_63_3,
+    ReadConfig.Safion_1_9,
     ReadConfig.Zahner_1,
     ReadConfig.Zahner_2,
     ReadConfig.Zahner_new_1,
     ReadConfig.Zahner_new_2,
     ReadConfig.Zahner_new_3,
-    ReadConfig.Safion_1_9,
-    ReadConfig.Parstat_2_63_3,
-    ReadConfig.BaSyTec_6_3_1_0,
-})
+)
 
 # TODO alle probieren und results speichern und dann dem User die auswahl lassen welche davon die richtigen sind
 # TODO und dann kann er den rest selber löschen?

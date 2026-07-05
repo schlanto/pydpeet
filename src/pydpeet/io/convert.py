@@ -22,53 +22,10 @@ from pydpeet.io.map import _mapping
 from pydpeet.io.utils.ext_path import _ExtPath
 from pydpeet.io.utils.load_custom_module import load_custom_module
 from pydpeet.io.write import write
-from pydpeet.utils.guardrails import _guardrail_boolean
 from pydpeet.utils.log_time import _log_time
 
 ConfigLike: TypeAlias = ReadConfig | str
 PathLike: TypeAlias = str | Path
-
-
-def convert(
-    config: ConfigLike,
-    input_path: object,
-    output_path: Optional[str] = None,
-    keep_all_additional_data: bool = False,
-    custom_folder_path: Optional[str] = None,
-) -> pd.DataFrame | list[pd.DataFrame] | None:
-    # Boolean guardrails
-    _guardrail_boolean(keep_all_additional_data, hard_fail_none=True, hard_fail_wrong_type=True)
-
-    if isinstance(input_path, str):
-        if os.path.isfile(input_path):
-            return _convert_file(config, input_path, output_path, keep_all_additional_data, custom_folder_path)
-        elif os.path.isdir(input_path):
-            return _convert_files_in_directory(
-                config, input_path, output_path, keep_all_additional_data, custom_folder_path
-            )
-        else:
-            raise ValueError("Input path is invalid!")
-    elif isinstance(input_path, list):
-        dfs = []
-        for input_item in input_path:
-            if isinstance(input_item, str):
-                if os.path.isfile(input_item):
-                    dfs.append(
-                        _convert_file(config, input_item, output_path, keep_all_additional_data, custom_folder_path)
-                    )
-                elif os.path.isdir(input_item):
-                    dfs.append(
-                        _convert_files_in_directory(
-                            config, input_item, output_path, keep_all_additional_data, custom_folder_path
-                        )
-                    )
-                else:
-                    raise ValueError("Input path item is invalid!")
-            else:
-                raise ValueError("Input path item is of invalid type!")
-        return dfs
-    else:
-        raise ValueError("Input path is of invalid type!")
 
 
 # TODO: Add output path functionality
@@ -118,6 +75,14 @@ def _convert_file(
         df = _add_metadata_to_dataframe(df, meta_data)
         df = _reorder_columns(df)
         df = _get_data_into_format(df, config, custom_folder_path)
+
+        if output_path is not None:
+            current_date = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+            config_name = config if isinstance(config, str) else config.name
+            filename = os.path.basename(input_path)
+            output_filename = f"{os.path.splitext(filename)[0]}_{config_name}_{current_date}"
+            os.makedirs(output_path, exist_ok=True)
+            write(df, output_path, output_filename, DataOutputFiletype.parquet)
 
         return df
 

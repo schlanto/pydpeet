@@ -89,11 +89,11 @@ def _do_export(
     logging.info(f"exporting to {output_path}")
     match data_output_filetype:
         case DataOutputFiletype.parquet:
-            full_output_path = f"{output_path}_Data.parquet"
+            full_output_path = f"{output_path}.parquet"
             df.to_parquet(full_output_path, index=False, engine="pyarrow")
         case DataOutputFiletype.csv:
-            full_output_path = f"{output_path}_Data.csv"
+            full_output_path = f"{output_path}.csv"
             df.to_csv(full_output_path, index=False)
         case DataOutputFiletype.xlsx:
-            full_output_path = f"{output_path}_Data.xlsx"
+            full_output_path = f"{output_path}.xlsx"
             df.to_excel(full_output_path, index=False)

@@ -190,7 +190,7 @@ def convert(
 
     # ---- auto-detection: flatten everything to files, try configs per file ----
     logging.warning("No config specified — using automatic config detection")
-    if not isinstance(input_path, (str, list)):
+    if not isinstance(input_path, str | list):
         raise ValueError("Input path is of invalid type!")
 
     all_files: list[str] = []

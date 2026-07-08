@@ -47,8 +47,6 @@ jobs:
     steps:
       - name: init
         uses: actions/checkout@v6
-        with:
-          lfs: true
       - name: uv
         uses: astral-sh/setup-uv@v7
         with:

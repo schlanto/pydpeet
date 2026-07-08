@@ -31,7 +31,6 @@ jobs:
         with:
           ref: ${{ inputs.tag || github.event.release.tag_name }}
           fetch-depth: 0
-          lfs: true
       - name: python
         uses: actions/setup-python@v6
         with:

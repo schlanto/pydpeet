@@ -1,4 +1,3 @@
-import logging
 from io import StringIO
 
 import pandas as pd
@@ -29,9 +28,8 @@ def _to_dataframe(input_path: str) -> tuple[pd.DataFrame, str]:
             break
 
     if not metadata_lines:
-        logging.warning("The file does not contain expected metadata lines starting with '~'.")
         raise ValueError(
-            "The file does not contain expected metadata lines starting with '~'. " "Cannot determine column headers."
+            "The file does not contain expected metadata lines starting with '~'. Cannot determine column headers."
         )
 
     # The last metadata line is used as the header; remove it from metadata_lines.

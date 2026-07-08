@@ -23,8 +23,6 @@ jobs:
     steps:
       - name: init
         uses: actions/checkout@v6
-        with:
-          lfs: true
       - name: python
         uses: actions/setup-python@v6
         with:
